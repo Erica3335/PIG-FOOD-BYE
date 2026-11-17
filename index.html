@@ -20,7 +20,7 @@ header h1{font-size:18px;}
 /* 左右布局容器 */
 .flex-container{display:flex;min-height:calc(100vh - 170px);}
 /* 左侧店铺菜单 */
-.sidebar{width:120px;background:#fff;overflow-y:auto;}
+.sidebar{width:140px;background:#fff;overflow-y:auto;}
 .sidebar-item{padding:12px 8px;text-align:center;font-size:13px;color:#444;border-bottom:1px solid #f0f0f0;cursor:pointer;}
 .sidebar-item.active{background:#ff4444;color:white;}
 /* 右侧菜品区域 */
@@ -60,7 +60,7 @@ header h1{font-size:18px;}
 
 /* 移动端侧边栏折叠 */
 @media (max-width:768px){
-  .sidebar{position:fixed;left:-120px;top:170px;bottom:90px;z-index:96;transition:0.2s;}
+  .sidebar{position:fixed;left:-140px;top:170px;bottom:90px;z-index:96;transition:0.2s;}
   .sidebar.open{left:0;}
   .menu-toggle{position:fixed;top:174px;left:4px;z-index:97;background:#ff4444;color:#fff;border:none;border-radius:4px;padding:4px 6px;font-size:14px;}
 }
@@ -79,7 +79,7 @@ header h1{font-size:18px;}
   <div class="tab" data-tab="order">我的订单</div>
 </div>
 <div class="search-wrap">
-  <input id="search-input" placeholder="搜索奶茶/蛋糕/火锅/锅包肉...">
+  <input id="search-input" placeholder="搜索烧烤/寿司/锅包肉/鱼生/热干面...">
 </div>
 <button class="menu-toggle" id="menuToggle">☰</button>
 
@@ -180,7 +180,7 @@ function getRandomWeightEvent() {
 }
 const EVENT_CHANCE = 0.35;
 
-// 店铺商品【替换成对应菜品真实图片】
+// ====================== 店铺菜品库（本次新增：东北烧烤、潮汕、湘鄂、日料） ======================
 const shopGoods = [
   {
     shopName:"雪之王｜奶茶饮品",
@@ -282,5 +282,62 @@ const shopGoods = [
       {name:"芹菜牛肉水饺",desc:"西芹配黄牛肉，香而不腻",price:18,img:"[https://img0.baidu.com/it/u=102410101,3120410200&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=102410101,3120410200&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
       {name:"荠菜猪肉水饺",desc:"野生荠菜，清香独特",price:16,img:"[https://img2.baidu.com/it/u=240124101,120410200&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=240124101,120410200&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
       {name:"香菇鸡肉水饺",desc:"鲜香菇鸡胸肉，低脂",price:14,img:"[https://img0.baidu.com/it/u=3120410201,102410100&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=3120410201,102410100&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
-      {name:"酸菜猪肉水饺",desc:"东北酸菜，酸香开胃",price:15,img:"[https://img2.baidu.com/it/u=120410200,240124101&fm=253&fmt=auto&app=120&f=JPEG](https://img2.baidu.com/it/u=120410200,240124101&fm=253&fmt=auto&app=120&f=JPEG)
+      {name:"酸菜猪肉水饺",desc:"东北酸菜，酸香开胃",price:15,img:"[https://img2.baidu.com/it/u=120410200,240124101&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=120410200,240124101&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"大葱牛肉水饺",desc:"黄牛肉配大葱，肉香浓郁",price:19,img:"[https://img0.baidu.com/it/u=102410100,3120410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=102410100,3120410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"西葫芦鸡蛋水饺",desc:"清爽西葫芦，清淡低脂",price:13,img:"[https://img2.baidu.com/it/u=240124100,120410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=240124100,120410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"鲅鱼水饺",desc:"胶东鲅鱼，鲜嫩无腥",price:24,img:"[https://img0.baidu.com/it/u=3120410200,102410101&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=3120410200,102410101&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"萝卜羊肉水饺",desc:"白萝卜+羊肉，秋冬暖身",price:20,img:"[https://img2.baidu.com/it/u=120410201,240124100&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=120410201,240124100&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"}
+    ]
+  },
+  // ========== 新增1：东北二哈烧烤 40款 ==========
+  {
+    shopName:"东北二哈烧烤",
+    goods:[
+      {name:"东北烤五花肉",desc:"肥瘦相间，焦香出油，撒孜然辣椒",price:6,img:"[https://img2.baidu.com/it/u=1677132021,2077044344&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=1677132021,2077044344&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤梅花肉串",desc:"梅花肉嫩而不柴，肉汁饱满",price:7,img:"[https://img0.baidu.com/it/u=372412021,112041224&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=372412021,112041224&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤牛筋串",desc:"Q弹有嚼劲，越嚼越香",price:5,img:"[https://img2.baidu.com/it/u=221421201,321410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=221421201,321410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤肥瘦牛肉串",desc:"东北鲜牛肉，炭火慢烤",price:8,img:"[https://img0.baidu.com/it/u=212410221,121422102&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=212410221,121422102&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤掌中宝",desc:"鸡脆骨，嘎嘣脆，一口爆香",price:7,img:"[https://img2.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤鸡皮",desc:"烤到微卷酥脆，油脂香气",price:4,img:"[https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤鸡翅中",desc:"外皮焦脆内里多汁",price:9,img:"[https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤鸡胗",desc:"紧实脆爽，入味十足",price:6,img:"[https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤羊排串",desc:"羔羊肋排，炭火焦香",price:12,img:"[https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤羊腰子",desc:"处理干净，不腥，滋补风味",price:14,img:"[https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤实蛋",desc:"东北特色实蛋，弹嫩入味",price:3,img:"[https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤毛蛋",desc:"东北烧烤经典毛蛋",price:4,img:"[https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤红肠",desc:"哈尔滨红肠，熏香浓郁",price:6,img:"[https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤大虾",desc:"鲜活海虾，炭火鲜甜",price:10,img:"[https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤鱿鱼须",desc:"鱿鱼须Q弹，刷秘制酱料",price:8,img:"[https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤整鱿鱼",desc:"大鱿鱼，厚实肉感",price:15,img:"[https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤扇贝",desc:"蒜蓉粉丝扇贝，鲜香味浓",price:10,img:"[https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤生蚝",desc:"蒜蓉生蚝，肥美多汁",price:12,img:"[https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤金针菇",desc:"吸满酱料，软嫩入味",price:5,img:"[https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤土豆片",desc:"薄脆土豆片，香辣可口",price:3,img:"[https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤茄子",desc:"蒜蓉大茄子，软乎乎",price:9,img:"[https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤韭菜",desc:"鲜嫩韭菜，烧烤必点",price:4,img:"[https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤青椒",desc:"薄皮青椒，微甜微辣",price:3,img:"[https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤娃娃菜",desc:"清甜娃娃菜，裹满酱汁",price:5,img:"[https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤玉米",desc:"甜糯玉米，刷甜酱",price:6,img:"[https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤馒头片",desc:"两面金黄酥脆，刷甜辣酱",price:3,img:"[https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤面包片",desc:"奶香面包，烤至微焦",price:4,img:"[https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤豆角",desc:"干香长豆角，越嚼越香",price:4,img:"[https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤香菇",desc:"厚香菇，锁鲜多汁",price:5,img:"[https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤面筋",desc:"大面筋，劲道入味",price:4,img:"[https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤豆皮卷",desc:"干豆皮卷香菜，风味独特",price:4,img:"[https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤实蛋肠",desc:"实蛋搭配香肠双拼",price:5,img:"[https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤牛板筋",desc:"厚切牛板筋，嚼劲十足",price:7,img:"[https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤脆骨肠",desc:"台式脆骨肠，爆脆口感",price:5,img:"[https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤鸡爪",desc:"卤后再烤，软糯脱骨",price:8,img:"[https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=212410201,121422102&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤猪蹄",desc:"软糯猪蹄，焦香外皮",price:16,img:"[https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=121420201,321410221&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤鸡头",desc:"东北经典烤鸡头，卤香入味",price:5,img:"[https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=321410201,212410221&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤干豆腐卷",desc:"东北干豆腐卷大葱",price:4,img:"[https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=212410221,121420201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"},
+      {name:"烤苕皮",desc:"川式苕皮，裹酸萝卜",price:6,img:"[https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500](https://img2.baidu.com/it/u=121422102,321410201&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=500)"},
+      {name:"烤石蛋青椒",desc:"实蛋搭配青椒，经典组合",price:4,img:"[https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500](https://img0.baidu.com/it/u=321410221,212410201&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500)"}
+    ]
+  },
+  // ========== 新增2：潮汕特色小馆 30款 ==========
+  {
+    shopName:"潮汕特色小馆",
+    goods:[
+      {name:"潮汕牛肉丸",desc:"手捶牛肉丸，Q弹爆汁",price:18,img:"[https://img2.baidu.com/it](https://img2.baidu.com/it)
 ```
