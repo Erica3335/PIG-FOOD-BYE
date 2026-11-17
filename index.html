@@ -1,395 +1,875 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>猪瘾治疗外卖模拟器</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍔 猪瘾治疗 · 模拟外卖</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#ff4444">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, sans-serif}
-body{background:#f5f5f5;color:#333;padding-bottom:100px}
-header{background:#ff4d4f;color:white;padding:14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:99}
-.search-wrap{flex:1}
-#searchInput{width:100%;border:0;border-radius:20px;padding:8px 14px;font-size:14px;outline:none}
-.container{display:flex}
-.left-shop{width:110px;background:#fff;height:calc(100vh - 56px);overflow-y:auto;position:sticky;top:56px}
-.shop-item{padding:14px 8px;text-align:center;border-bottom:1px solid #eee;font-size:13px;cursor:pointer}
-.shop-item.active{background:#fff2f2;color:#ff4d4f;font-weight:bold}
-.right-food{flex:1;padding:12px;overflow-y:auto;height:calc(100vh - 56px)}
-.food-card{background:#fff;border-radius:10px;padding:10px;margin-bottom:10px;display:flex;gap:10px}
-.food-info{flex:1}
-.food-name{font-weight:bold;margin-bottom:4px}
-.food-desc{font-size:12px;color:#777;margin-bottom:6px}
-.food-price{color:#ff4d4f}
-.add-btn{background:#ff4d4f;color:#fff;border:0;border-radius:16px;padding:4px 10px;cursor:pointer}
-.cart-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px;border-top:1px solid #ddd}
-.cart-info{flex:1}
-.submit-order{background:#ff4d4f;color:white;border:0;padding:8px 18px;border-radius:20px;cursor:pointer}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:999}
-.modal-box{background:#fff;width:85%;max-width:420px;border-radius:12px;padding:20px}
-.modal h3{margin-bottom:12px}
-.opt-btn{width:100%;margin:6px 0;padding:10px;border:1px solid #ff4d4f;background:#fff;color:#ff4d4f;border-radius:8px;cursor:pointer}
-.opt-btn.primary{background:#ff4d4f;color:#fff}
-.stat-wrap{padding:12px;background:#fff;border-radius:10px;margin:12px}
-.event-text{margin:10px 0;line-height:1.6}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif;}
+body{background:#f2f2f5;color:#333;padding-bottom:96px;}
+header{background:#ff4444;color:#fff;padding:14px 16px;position:sticky;top:0;z-index:99;display:flex;justify-content:space-between;align-items:center;}
+header h1{font-size:17px;font-weight:700;}
+.stat-btn{border:none;background:rgba(255,255,255,.18);color:#fff;padding:7px 12px;border-radius:8px;font-size:13px;cursor:pointer;}
+
+.tab-bar{display:flex;background:#fff;position:sticky;top:52px;z-index:98;}
+.tab{flex:1;text-align:center;padding:11px 0;font-size:14px;color:#666;border-bottom:2px solid transparent;cursor:pointer;}
+.tab.active{color:#ff4444;border-color:#ff4444;font-weight:700;}
+
+.search-wrap{padding:10px 12px;background:#fff;}
+#search-input{width:100%;padding:10px 14px;border-radius:20px;border:1px solid #e3e3e3;font-size:14px;outline:none;background:#f7f7f7;}
+
+/* 点餐主区：手机上下结构，宽屏左右双栏 */
+.app{display:flex;gap:12px;padding:10px;}
+.shop-side{width:240px;flex:none;}
+.goods-side{flex:1;min-width:0;}
+
+/* 店铺列表 */
+.shop-card{background:#fff;border-radius:12px;margin-bottom:10px;overflow:hidden;cursor:pointer;display:flex;gap:10px;padding:10px;transition:box-shadow .15s;}
+.shop-card:active{box-shadow:0 2px 10px rgba(0,0,0,.15);}
+.shop-card.active{outline:2px solid #ff4444;}
+.shop-cover{width:64px;height:64px;border-radius:10px;flex:none;overflow:hidden;background:linear-gradient(135deg,#fff3e6,#ffe1e1);display:grid;place-items:center;}
+.shop-cover .fallback{display:grid;place-items:center;font-size:30px;}
+.shop-meta{min-width:0;display:flex;flex-direction:column;justify-content:center;}
+.shop-name{font-size:15px;font-weight:700;}
+.shop-sub{font-size:12px;color:#888;margin-top:3px;}
+
+/* 店铺头部返回栏 */
+.shop-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.back-btn{border:1px solid #ddd;background:#fff;border-radius:8px;padding:7px 12px;font-size:14px;cursor:pointer;}
+.shop-head-title{font-size:17px;font-weight:700;}
+
+/* 菜品网格 */
+.goods-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.goods-item{background:#fff;border-radius:12px;overflow:hidden;}
+.goods-img{height:110px;display:grid;place-items:center;background:linear-gradient(135deg,#fff3e6,#ffe1e1);}
+.goods-img .fallback{display:grid;place-items:center;font-size:44px;}
+.goods-info{padding:10px;}
+.goods-name{font-size:14px;font-weight:600;margin-bottom:3px;}
+.goods-desc{font-size:12px;color:#888;line-height:1.4;margin-bottom:6px;}
+.meta-row{font-size:11px;color:#666;line-height:1.5;margin-top:2px;}
+.meta-row b{color:#333;font-weight:600;}
+.tag-chips{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0;}
+.tag-chip{font-size:10px;color:#ff6b35;background:#fff0e6;border-radius:6px;padding:2px 7px;}
+.fresh-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:#22a05a;background:#eafaf0;border-radius:6px;padding:2px 7px;margin-top:3px;}
+.goods-foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+.goods-price{color:#ff4444;font-weight:700;font-size:15px;}
+.add-btn{width:28px;height:28px;border:none;background:#ff4444;color:#fff;border-radius:50%;font-size:18px;line-height:1;cursor:pointer;}
+
+.empty-tip{text-align:center;padding:50px 20px;color:#999;font-size:14px;}
+
+/* 购物车栏 */
+.cart-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;border-top:1px solid #eee;z-index:99;}
+.cart-info{flex:1;min-width:0;}
+.cart-count{color:#ff4444;font-weight:700;}
+.cart-total{font-size:14px;}
+.settle-btn{padding:10px 18px;background:#ff4444;color:#fff;border:none;border-radius:22px;font-weight:700;cursor:pointer;}
+
+/* 弹窗 */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;}
+.modal-box{background:#fff;border-radius:14px;max-width:420px;width:100%;padding:20px;max-height:85vh;overflow-y:auto;}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:12px;}
+.modal-desc{color:#555;line-height:1.6;margin-bottom:16px;}
+.opt-row{display:flex;gap:10px;}
+.opt-btn{flex:1;padding:10px;border:1px solid #ff4444;background:#fff;color:#ff4444;border-radius:8px;cursor:pointer;font-size:14px;}
+.opt-btn.primary{background:#ff4444;color:#fff;border-color:#ff4444;}
+.step{padding:8px 0;border-bottom:1px solid #eee;font-size:14px;}
+.step.done{color:#22bb22;}
+.step.current{color:#ff4444;font-weight:700;}
+.stat-item{padding:9px 0;display:flex;justify-content:space-between;font-size:14px;}
+
+/* 订单 */
+.order-item{background:#fff;border-radius:12px;margin:10px;padding:12px;}
+.order-time{font-size:12px;color:#777;margin-bottom:6px;}
+.order-shopname{font-weight:700;margin-bottom:6px;}
+.order-line{font-size:13px;color:#444;padding:2px 0;}
+.order-sum{margin-top:6px;padding-top:6px;border-top:1px dashed #eee;font-weight:700;color:#ff4444;}
+
+/* 宽屏双栏 */
+@media (min-width:768px){
+  .shop-side{width:260px;}
+  .goods-grid{grid-template-columns:repeat(3,1fr);}
+}
+/* 窄屏：店铺/菜品视图切换，隐藏侧栏 */
+@media (max-width:767px){
+  .app{padding:10px;}
+  .shop-side.hidden{display:none;}
+  .goods-side.hidden{display:none;}
+}
 </style>
 </head>
 <body>
 <header>
-  <div class="search-wrap">
-    <input id="searchInput" placeholder="搜索：奶茶 / 蛋糕 / 西湖醋鱼 / 火锅食材">
-  </div>
+  <h1>🍔 猪瘾治疗外卖模拟器</h1>
+  <button class="stat-btn" id="stat-btn">统计</button>
 </header>
-<div class="container">
-  <div class="left-shop" id="shopList"></div>
-  <div class="right-food" id="foodList"></div>
+
+<div class="tab-bar">
+  <div class="tab active" data-tab="food">点餐</div>
+  <div class="tab" data-tab="order">我的订单</div>
 </div>
 
+<div class="search-wrap">
+  <input id="search-input" placeholder="搜索奶茶 / 蛋糕 / 火锅 / 饺子 / 小吃...">
+</div>
+
+<!-- 点餐区 -->
+<div id="foodPage">
+  <div class="app">
+    <div class="shop-side" id="shopSide"></div>
+    <div class="goods-side hidden" id="goodsSide"></div>
+  </div>
+</div>
+
+<!-- 订单区 -->
+<div id="orderPage" style="display:none;">
+  <div id="orderListWrap"></div>
+</div>
+
+<!-- 购物车栏 -->
 <div class="cart-bar">
-  <div class="cart-info">购物车：<span id="cartNum">0</span>件｜合计 ¥<span id="cartTotal">0.00</span></div>
-  <button class="submit-order" id="submitBtn">提交订单（假装支付）</button>
+  <div class="cart-info">
+    <div>购物车 <span class="cart-count" id="cartNum">0</span> 件</div>
+    <div class="cart-total">合计：¥<span id="cartTotal">0.00</span></div>
+  </div>
+  <button class="settle-btn" id="settleBtn">去结算</button>
 </div>
 
-<!--弹窗：骑手事件 / 每日统计弹窗-->
-<div class="modal" id="modal">
+<!-- 骑手奇遇弹窗 -->
+<div class="modal" id="eventModal">
   <div class="modal-box">
-    <h3 id="modalTitle"></h3>
-    <div class="event-text" id="modalText"></div>
-    <div id="modalBtns"></div>
+    <div class="modal-title" id="eventTitle"></div>
+    <div class="modal-desc" id="eventDesc"></div>
+    <div class="opt-row">
+      <button class="opt-btn" id="optA"></button>
+      <button class="opt-btn primary" id="optB"></button>
+    </div>
+  </div>
+</div>
+
+<!-- 配送弹窗 -->
+<div class="modal" id="orderModal">
+  <div class="modal-box">
+    <div class="modal-title">订单配送中</div>
+    <div id="orderSteps"></div>
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button class="opt-btn" id="remindBtn">催单</button>
+      <button class="opt-btn primary" id="closeOrderModal">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 统计弹窗 -->
+<div class="modal" id="statModal">
+  <div class="modal-box">
+    <div class="modal-title">📊 猪瘾治疗统计</div>
+    <div class="stat-item"><span>今日节省</span><span id="daySave">¥0.00</span></div>
+    <div class="stat-item"><span>本周节省</span><span id="weekSave">¥0.00</span></div>
+    <div class="stat-item"><span>本月节省</span><span id="monthSave">¥0.00</span></div>
+    <div class="opt-row" style="margin-top:16px;">
+      <button class="opt-btn primary" id="closeStatModal">知道了</button>
+    </div>
   </div>
 </div>
 
 <script>
-// ===================== 全部菜品数据（奶茶30｜蛋糕50｜饺子｜火锅｜各地小吃）=====================
-const shopData = [
-  {shopName:"甜铺小栈",category:"甜品饮品",foods:[
-    {name:"经典珍珠奶茶",desc:"香浓红茶搭配Q弹黑珍珠，甜度可选",price:14},
-    {name:"芋泥波波奶茶",desc:"手捣厚芋泥，绵密软糯",price:16},
-    {name:"杨枝甘露奶茶",desc:"芒果西柚融合，清爽果香",price:18},
-    {name:"海盐芝士奶绿",desc:"咸香奶盖搭配清新绿茶",price:15},
-    {name:"四季春奶盖茶",desc:"乌龙茶香醇厚，奶盖绵密",price:14},
-    {name:"桂花酒酿奶茶",desc:"秋日限定，桂花甜香+酒酿",price:17},
-    {name:"板栗厚乳奶茶",desc:"秋日限定，粉糯板栗泥",price:18},
-    {name:"南瓜燕麦奶",desc:"秋日暖饮，无负担",price:16},
-    {name:"烤红薯奶茶",desc:"秋日限定，香甜烤红薯风味",price:17},
-    {name:"柿子奶盖茶",desc:"秋日限定，新鲜柿子果肉",price:19},
-    {name:"圣诞热可可",desc:"圣诞限定，棉花糖顶",price:20},
-    {name:"圣诞肉桂苹果茶",desc:"圣诞限定，热红酒风味无酒精",price:21},
-    {name:"草莓圣诞奶昔",desc:"圣诞限定新鲜草莓",price:22},
-    {name:"黑糖鲜奶",desc:"古法熬制黑糖，丝滑鲜奶",price:15},
-    {name:"茉莉奶白",desc:"清香茉莉，奶味柔和",price:14},
-    {name:"青提鲜果茶",desc:"阳光青提爆汁",price:17},
-    {name:"油柑柠檬茶",desc:"回甘清爽，解腻神器",price:16},
-    {name:"鸭屎香柠檬茶",desc:"凤凰单丛茶香浓郁",price:15},
-    {name:"百香果双响炮",desc:"百香果+珍珠椰果",price:14},
-    {name:"芝芝莓莓",desc:"新鲜草莓+芝士奶盖",price:19},
-    {name:"芝芝桃桃",desc:"水蜜桃果肉冰沙",price:19},
-    {name:"多肉葡萄",desc:"巨峰葡萄果肉，脆啵啵",price:18},
-    {name:"厚乳拿铁",desc:"咖啡+厚牛乳，丝滑",price:17},
-    {name:"生椰拿铁",desc:"椰香浓郁，经典款",price:16},
-    {name:"陨石拿铁",desc:"黑糖晶球搭配拿铁",price:17},
-    {name:"香草星冰乐",desc:"香草奶油冰沙",price:20},
-    {name:"抹茶星冰乐",desc:"宇治抹茶，微苦清甜",price:20},
-    {name:"红豆牛乳",desc:"绵密红豆，暖乎乎",price:14},
-    {name:"绿豆沙牛乳",desc:"沙沙绿豆，消暑",price:13},
-    {name:"香蕉奶昔",desc:"新鲜香蕉，顺滑香甜",price:15}
-  ]},
-  {shopName:"蛋糕专门店",category:"蛋糕甜品",foods:[
-    {name:"可露丽",desc:"外壳焦脆内里软糯，香草朗姆香气",price:16},
-    {name:"黑森林蛋糕",desc:"黑巧克力+樱桃酒渍果肉",price:28},
-    {name:"提拉米苏",desc:"马斯卡彭芝士，可可微苦",price:26},
-    {name:"巴斯克芝士蛋糕",desc:"焦香流心芝士",price:24},
-    {name:"红丝绒蛋糕",desc:"乳酪奶油，酸甜柔和",price:25},
-    {name:"芒果慕斯",desc:"新鲜芒果，清爽慕斯",price:22},
-    {name:"草莓千层",desc:"薄饼皮+新鲜草莓奶油",price:29},
-    {name:"抹茶千层",desc:"宇治抹茶微苦奶油",price:28},
-    {name:"榴莲千层",desc:"金枕榴莲果肉满满",price:32},
-    {name:"奥利奥千层",desc:"奥利奥碎+奶油",price:26},
-    {name:"巧克力熔岩蛋糕",desc:"切开流心巧克力",price:22},
-    {name:"舒芙蕾松饼",desc:"蓬松软fufu，配奶油水果",price:23},
-    {name:"法式焦糖布丁",desc:"脆焦糖外壳，嫩滑布丁",price:15},
-    {name:"海盐芝士蛋糕",desc:"咸甜平衡，不腻",price:24},
-    {name:"椰香椰子冻",desc:"新鲜椰肉，Q弹",price:14},
-    {name:"杨枝甘露蛋糕",desc:"芒果西柚慕斯",price:27},
-    {name:"覆盆子慕斯",desc:"树莓酸甜，清新果香",price:27},
-    {name:"伯爵茶慕斯",desc:"佛手柑茶香，淡雅",price:26},
-    {name:"桂花奶冻卷",desc:"秋日桂花，柔软蛋糕卷",price:22},
-    {name:"南瓜芝士卷",desc:"秋日限定，绵密南瓜",price:23},
-    {name:"柿子巴斯克",desc:"秋日限定柿子果肉",price:25},
-    {name:"栗子蒙布朗",desc:"秋日限定手磨栗子泥",price:30},
-    {name:"圣诞树根蛋糕",desc:"圣诞限定巧克力树根",price:33},
-    {name:"圣诞草莓花环蛋糕",desc:"圣诞限定新鲜草莓",price:35},
-    {name:"雪花酥",desc:"奶香坚果雪花酥",price:12},
-    {name:"曲奇饼干礼盒",desc:"黄油曲奇，酥松",price:20},
-    {name:"马卡龙",desc:"法式低糖马卡龙",price:18},
-    {name:"奶盖蛋糕卷",desc:"云朵奶油，松软",price:21},
-    {name:"青提慕斯",desc:"阳光青提清甜",price:25},
-    {name:"蓝莓芝士",desc:"新鲜蓝莓果粒",price:24},
-    {name:"生巧",desc:"法芙娜生巧克力",price:28},
-    {name:"芒果班戟",desc:"薄皮芒果奶油",price:16},
-    {name:"榴莲班戟",desc:"榴莲果肉班戟",price:18},
-    {name:"雪媚娘奥利奥",desc:"糯叽叽雪媚娘",price:14},
-    {name:"雪媚娘草莓",desc:"草莓奶油雪媚娘",price:15},
-    {name:"焦糖泡芙",desc:"脆皮泡芙焦糖酱",price:13},
-    {name:"奶油号角",desc:"酥脆外壳，奶油内馅",price:12},
-    {name:"芋泥蛋糕",desc:"手捣芋泥，低糖",price:23},
-    {name:"紫薯慕斯",desc:"紫薯清香低脂",price:22},
-    {name:"香蕉蛋糕",desc:"香蕉湿润蛋糕",price:19},
-    {name:"核桃布朗尼",desc:"浓巧克力+核桃",price:24},
-    {name:"芝士麻薯",desc:"Q弹麻薯裹芝士",price:11},
-    {name:"抹茶大福",desc:"抹茶糯米大福",price:13},
-    {name:"红豆大福",desc:"绵密红豆大福",price:12},
-    {name:"椰子蛋糕",desc:"椰香奶油蛋糕",price:22},
-    {name:"百香果蛋糕",desc:"酸甜百香果奶油",price:23},
-    {name:"玫瑰慕斯",desc:"食用玫瑰香气",price:26},
-    {name:"杏仁瓦片",desc:"酥脆杏仁薄片",price:14},
-    {name:"可可脆片",desc:"巧克力脆片",price:13},
-    {name:"布丁烧",desc:"布丁+蛋糕双层",price:16},
-    {name:"云朵蛋糕",desc:"低糖轻乳酪",price:21}
-  ]},
-  {shopName:"饺子馆",category:"饺子主食",foods:[
-    {name:"白菜猪肉水饺",desc:"新鲜大白菜，土猪肉，皮薄馅足",price:18},
-    {name:"韭菜鸡蛋水饺",desc:"新鲜韭菜，土鸡蛋，清爽素馅",price:16},
-    {name:"三鲜水饺",desc:"虾仁+鸡蛋+木耳，鲜甜味",price:22},
-    {name:"玉米猪肉水饺",desc:"甜玉米搭配猪肉，清甜多汁",price:19},
-    {name:"香菇猪肉水饺",desc:"干香菇提香，肉香浓郁",price:19},
-    {name:"芹菜猪肉水饺",desc:"香芹脆嫩，解腻",price:18},
-    {name:"荠菜猪肉水饺",desc:"山野荠菜，鲜香味浓",price:20},
-    {name:"大葱牛肉水饺",desc:"黄牛肉大葱，浓郁肉香",price:23},
-    {name:"胡萝卜羊肉水饺",desc:"暖身羊肉，胡萝卜去膻",price:24},
-    {name:"鲅鱼水饺",desc:"胶东特色，新鲜鲅鱼肉",price:26},
-    {name:"墨鱼水饺",desc:"墨鱼肉馅，Q弹鲜甜",price:27},
-    {name:"虾仁水饺",desc:"整颗大虾仁，弹牙",price:28},
-    {name:"酸菜猪肉水饺",desc:"东北酸菜，酸香开胃",price:19},
-    {name:"西葫芦鸡蛋水饺",desc:"清爽西葫芦素馅",price:16},
-    {name:"青椒牛肉水饺",desc:"鲜椒微辣牛肉馅",price:23}
-  ]},
-  {shopName:"鲜捞火锅食材店",category:"火锅食材",foods:[
-    {name:"雪花肥牛卷",desc:"原切雪花纹理，肥瘦均匀，下锅即熟",price:32},
-    {name:"精品肥羊卷",desc:"内蒙羔羊肉，奶香不膻",price:30},
-    {name:"黑毛猪五花肉片",desc:"五花层次分明，涮完香而不腻",price:26},
-    {name:"手打虾滑",desc:"大颗粒青虾仁，Q弹紧实无淀粉",price:24},
-    {name:"鱼豆腐",desc:"深海鱼糜制作，鲜嫩爆汁",price:12},
-    {name:"撒尿牛丸",desc:"牛肉丸咬开爆汤汁",price:14},
-    {name:"贡菜丸子",desc:"贡菜脆爽搭配肉馅",price:13},
-    {name:"毛肚",desc:"新鲜黑毛肚，七上八下脆爽",price:36},
-    {name:"黄喉",desc:"新鲜牛黄喉，脆嫩弹牙",price:34},
-    {name:"鸭肠",desc:"新鲜鸭肠，清洗干净，脆嫩",price:22},
-    {name:"鸭血",desc:"新鲜鸭血，滑嫩无气孔",price:9},
-    {name:"巴沙鱼片",desc:"无刺鱼片，嫩白滑口",price:18},
-    {name:"嫩牛肉片",desc:"腌制滑牛肉，久煮不老",price:28},
-    {name:"鹌鹑蛋",desc:"新鲜鹌鹑蛋，入味好吃",price:8},
-    {name:"金针菇",desc:"鲜采金针菇，脆嫩爽口",price:7},
-    {name:"娃娃菜",desc:"清甜娃娃菜，吸满汤汁超香",price:6},
-    {name:"贡菜干",desc:"脱水贡菜，泡发后超级脆",price:10},
-    {name:"海带结",desc:"厚海带结，软糯入味",price:7},
-    {name:"土豆片",desc:"新鲜黄心土豆，粉糯",price:5},
-    {name:"藕片",desc:"洪湖莲藕，脆甜多汁",price:8},
-    {name:"竹笋片",desc:"嫩春笋，脆嫩清香",price:9},
-    {name:"冻豆腐",desc:"老豆腐冷冻，多孔吸汤",price:6},
-    {name:"油豆腐",desc:"空心油豆腐，一口爆汤",price:7},
-    {name:"红薯粉",desc:"手工红薯宽粉，筋道",price:8},
-    {name:"方便面饼",desc:"火锅面，吸汤汁神器",price:5}
-  ]},
-  {shopName:"各地特色小吃铺",category:"地方小吃",foods:[
-    {name:"西湖醋鱼",desc:"杭州特色，酸甜鲜嫩草鱼",price:38},
-    {name:"凉拌折耳根",desc:"云贵特色，脆嫩折耳根，香辣调味",price:14},
-    {name:"烤包子（新疆）",desc:"外皮酥脆，羊肉洋葱内馅",price:12},
-    {name:"手抓饭（新疆）",desc:"羊肉胡萝卜香糯米饭",price:22},
-    {name:"红柳烤串（新疆）",desc:"红柳木串羊肉，果香浓郁",price:18},
-    {name:"潮汕牛肉丸粿条汤",desc:"手打牛丸，鲜掉眉毛",price:24},
-    {name:"潮汕卤鹅拼盘",desc:"卤香狮头鹅，肥而不腻",price:36},
-    {name:"潮汕蚝烙",desc:"鲜蚝+鸡蛋煎制，外酥里嫩",price:26},
-    {name:"锅包肉（东北）",desc:"酸甜酥脆，经典东北菜",price:28},
-    {name:"酸菜白肉锅（东北）",desc:"东北酸菜+五花，暖锅",price:32},
-    {name:"冻梨（东北）",desc:"东北特色冻梨，化了清甜多汁",price:10},
-    {name:"烤冷面（东北）",desc:"街边经典，酸甜香辣",price:12},
-    {name:"长沙臭豆腐",desc:"外焦里嫩，香辣汤汁",price:14},
-    {name:"柳州螺蛳粉",desc:"酸笋腐竹花生，酸辣够味",price:18},
-    {name:"重庆小面",desc:"麻辣鲜香，红油劲道面条",price:16},
-    {name:"武汉热干面",desc:"麻酱香浓，碱水面",price:14},
-    {name:"西安肉夹馍",desc:"腊汁肉剁碎，外皮酥脆",price:15},
-    {name:"羊肉泡馍",desc:"掰馍泡入羊汤，浓郁鲜香",price:24},
-    {name:"南京盐水鸭",desc:"咸香鸭肉，肉质细嫩",price:30},
-    {name:"广东肠粉",desc:"鲜虾肠粉，滑嫩米皮",price:16},
-    {name:"沙县蒸饺",desc:"皮薄肉馅，蘸醋吃",price:12},
-    {name:"福建土笋冻",desc:"Q弹土笋冻，蘸芥末酱油",price:18},
-    {name:"云南汽锅鸡",desc:"不加一滴水，鲜鸡汤",price:36},
-    {name:"贵州丝娃娃",desc:"薄饼裹素菜，蘸酸汤",price:16}
-  ]}
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+
+/* ================= 骑手奇遇（20条，加权概率） ================= */
+const eventList = [
+  {title:"🐱 骑手在路上遇到一只小猫咪",desc:"路边有一只软乎乎小猫蹲在路中间看骑手，骑手停下了车",optA:"跟小猫说你好",optB:"继续骑行",resA:"骑手蹲下来跟小猫打招呼，小猫蹭了蹭裤腿，治愈一下继续赶路",resB:"骑手轻轻绕开小猫，抓紧继续配送",weight:10},
+  {title:"🌧️ 突然下起大雨",desc:"乌云翻涌，大雨说来就来，骑手正在寻找躲雨的屋檐",optA:"给骑手空降一把雨伞",optB:"冒雨继续骑行",resA:"✨ 你空投了一把雨伞！骑手撑伞安心赶路，心里暖暖的",resB:"骑手裹紧外套，冒着雨水继续往前冲",weight:5},
+  {title:"😔 骑手情绪低落，正在悄悄难过",desc:"骑手今天跑了很多单，有点疲惫委屈，停下来抹眼泪",optA:"送一个电子拥抱",optB:"调整心情继续骑",resA:"🤗 你送出电子拥抱！骑手收到安慰，擦干眼泪继续出发",resB:"骑手深呼吸，调整好情绪继续往前配送",weight:6},
+  {title:"👵 路边老奶奶提着重物走不动",desc:"老奶奶拎着一大袋菜，脚步缓慢，看起来很吃力",optA:"骑手上前帮忙提一段路",optB:"不耽误订单，继续赶路",resA:"骑手热心帮奶奶把东西送到小区门口，奶奶连连道谢",resB:"骑手心里有点过意不去，只能加速尽快给你送到",weight:2},
+  {title:"🚽 骑手有点内急",desc:"骑了好久，骑手想上厕所，附近正好有公共卫生间",optA:"允许骑手去方便一下",optB:"先送完这一单再说",resA:"骑手安心去卫生间休整片刻，一身轻松继续出发",resB:"骑手忍住不适，加快速度，优先把你的外卖送到",weight:7},
+  {title:"💐 偶遇有好感的女同学",desc:"路边站着骑手很久没见、心里有好感的女生，正在等公交",optA:"停下来打个招呼",optB:"微笑路过不耽搁",resA:"骑手停下简单聊了两句，心里甜甜的，带着好心情赶路",resB:"骑手悄悄看了一眼，轻轻挥手，继续专心配送",weight:3},
+  {title:"🍜 骑手肚子饿啦",desc:"忙了一中午还没吃饭，路过小吃店，香味扑面而来",optA:"允许骑手简单吃点东西垫肚子",optB:"送完再吃饭",resA:"骑手快速买了个包子几口吃完，补充体力继续跑单",resB:"骑手摸摸空空的肚子，决定送完这一单再去吃饭",weight:6},
+  {title:"🐦 小鸟落在路边飞不起来",desc:"一只幼鸟掉落在人行道，扑腾翅膀却无法起飞",optA:"停下来小心照看小鸟",optB:"继续赶路",resA:"骑手小心把小鸟放到旁边安全的灌木丛，才重新出发",resB:"骑手看了一眼，只能继续优先配送你的订单",weight:4},
+  {title:"🚦 等红灯，肩膀很僵硬",desc:"长时间握车把手，骑手肩颈发酸，红灯时间比较长",optA:"趁红灯活动舒展一下",optB:"原地待命准备出发",resA:"骑手转动脖子、甩甩手臂，紧绷的肩膀舒服不少",resB:"骑手保持握车姿势，绿灯一亮立刻出发",weight:9},
+  {title:"🎵 街头歌手正在弹唱",desc:"路口有歌手弹吉他唱歌，旋律温柔好听",optA:"停下来听一小段",optB:"不驻足，直接经过",resA:"骑手静静听了一小段歌，烦恼都少了很多",resB:"骑手欣赏地望了一眼，继续向前骑行",weight:7},
+  {title:"🧊 天很热，路过便利店",desc:"太阳火辣辣，骑手满头大汗，便利店就在旁边",optA:"买一瓶冰水降温",optB:"坚持送到再喝水",resA:"骑手买了冰水喝上几口，燥热缓解很多",resB:"骑手擦擦汗水，忍着口渴继续赶路",weight:8},
+  {title:"🐶 温顺小狗拦在车前",desc:"一只性格温顺的狗狗摇尾巴，好奇凑过来打量骑手",optA:"停下来摸摸小狗",optB:"缓慢绕行过去",resA:"骑手伸手轻轻摸了摸狗头，小狗开心摇尾巴",resB:"骑手慢慢减速，平稳绕开可爱小狗继续走",weight:10},
+  {title:"📱 家人发来消息",desc:"骑手家人发来消息，问今天能不能早点回家吃饭",optA:"停下来回复消息",optB:"等送完再回消息",resA:"骑手简短回复家人，心里暖暖的继续跑单",resB:"骑手先把手机放回口袋，打算送完这一单再回消息",weight:5},
+  {title:"🍃 路边小花很好看",desc:"路边一簇小花开得鲜亮，看着让人心情变好",optA:"摘一朵送给自己",optB:"欣赏一下继续走",resA:"骑手小心摘了一朵小花放在车筐，一路带着花香赶路",resB:"骑手多看了两眼漂亮小花，带着好心情继续配送",weight:8},
+  {title:"🛠️ 车筐有点松动",desc:"电动车车筐螺丝松了，晃动得有点明显",optA:"停下来拧紧螺丝",optB:"先将就送到",resA:"骑手拿出随身小工具快速拧紧，车子骑起来稳很多",resB:"骑手小心骑行，尽量稳住车筐，防止餐品晃动",weight:2},
+  {title:"☁️ 天边晚霞绝美",desc:"天边铺满橘红色晚霞，景色特别治愈",optA:"停下来看一会晚霞",optB:"抓紧往前赶",resA:"骑手停下静静欣赏晚霞，一天的疲惫消散大半",resB:"骑手匆匆瞥一眼晚霞，继续奔赴目的地",weight:9},
+  {title:"🧺 路边烤红薯飘香",desc:"烤红薯小摊热气腾腾，香甜气味飘很远",optA:"买一块红薯暖暖身子",optB:"忍住不吃，先送单",resA:"骑手买了一块热乎乎红薯，捧着暖手又解馋",resB:"骑手咽了咽口水，继续往前骑行",weight:4},
+  {title:"🧢 帽子被风吹落",desc:"一阵大风把骑手的帽子吹到路边",optA:"停车捡回帽子",optB:"不捡了继续走",resA:"骑手停下车捡回帽子戴好，挡住刺眼阳光",resB:"骑手索性迎着风，不回头，继续向前骑行",weight:3},
+  {title:"📖 小朋友挥手打招呼",desc:"路边坐着看书的小朋友，笑着朝骑手挥手",optA:"挥手回应小朋友",optB:"点头路过",resA:"骑手笑着挥手回应小朋友，小朋友笑得更开心啦",resB:"骑手温柔点头示意，慢慢骑过去",weight:9},
+  {title:"🥤 店家递来免费温水",desc:"路过小店，店主看见骑手辛苦，主动递一杯温水",optA:"收下这杯温水",optB:"婉拒好意，继续赶路",resA:"骑手接过温水道谢，喝下之后浑身舒服",resB:"骑手笑着感谢店主好意，礼貌婉拒继续配送",weight:6}
+];
+function getRandomWeightEvent(){
+  const total = eventList.reduce((s,i)=>s+i.weight,0);
+  let r = Math.random()*total;
+  for(const e of eventList){ r-=e.weight; if(r<=0) return e; }
+  return eventList[0];
+}
+const EVENT_CHANCE = 0.35;
+
+/* ================= 菜品兜底图标池（简单 emoji 图标，不依赖外链图片） ================= */
+const EMOJI = {
+  milktea:["🧋","🍵","🥤","🧃"],
+  cake:["🎂","🍰","🧁","🍡"],
+  dumpling:["🥟","🥢"],
+  hotpot:["🍲","🥩","🦐","🥬"],
+  snack:["🥩","🍚","🍢","🦪"],
+  sushi:["🍣","🍥","🦑","🍤"],
+  bbq:["🍢","🥩","🦞","🧄"],
+  xinjiang:["🫓","🍚","🫔","🥩"]
+};
+function foodIcon(pool, i){
+  const arr = EMOJI[pool] || ["🍽️"];
+  return arr[i % arr.length];
+}
+
+/* ================= 品类默认描述：食材 / 配料 / 风味 / 新鲜度 ================= */
+const META = {
+  milktea:{
+    ing:"鲜牛奶、原叶茶汤、鲜果或馅料",
+    mat:"糖浆、珍珠/芋圆、果肉、茶底、奶盖",
+    flav:["奶香","醇厚","清甜"],
+    fresh:"鲜果现切，当日鲜奶"
+  },
+  cake:{
+    ing:"面粉、动物奶油、鸡蛋、鲜果或坚果",
+    mat:"芝士、糖霜、果酱、可可/抹茶粉",
+    flav:["香甜","绵密","浓郁"],
+    fresh:"当日现烤，动物奶油"
+  },
+  dumpling:{
+    ing:"手工面皮、鲜肉或蔬菜、鸡蛋",
+    mat:"葱姜、生抽、香油、盐、馅料调拌",
+    flav:["鲜香","多汁","清淡"],
+    fresh:"新鲜现包，当日调馅"
+  },
+  hotpot:{
+    ing:"鲜肉、海鲜、菌菇与时蔬",
+    mat:"锅底汤底、蘸料、葱姜蒜",
+    flav:["鲜嫩","脆爽","入味"],
+    fresh:"当日鲜切，冷链送达"
+  },
+  snack:{
+    ing:"当地主料（肉、米或时令菜）",
+    mat:"卤料、秘制酱料、本地香料",
+    flav:["地道","咸香","家常"],
+    fresh:"当日采购，手工制作"
+  },
+  sushi:{
+    ing:"刺身鲜鱼、醋饭、海苔",
+    mat:"山葵、寿司酱油、寿司醋",
+    flav:["鲜甜","清爽","弹嫩"],
+    fresh:"当日刺身，冰鲜直达"
+  },
+  bbq:{
+    ing:"鲜肉串、海鲜与时蔬",
+    mat:"孜然、辣椒、蒜蓉、烧烤油料",
+    flav:["炭香","香辣","焦嫩"],
+    fresh:"当日腌制，现点现烤"
+  },
+  xinjiang:{
+    ing:"羊肉、面粉、大米与时蔬",
+    mat:"洋葱、孜然、胡萝卜、西域香料",
+    flav:["香浓","入味","微辣"],
+    fresh:"本地鲜羊，现做现上"
+  }
+};
+// 取某菜品的完整描述（菜品可在条目里用 ing/mat/flav/fresh 覆盖默认值）
+function getMeta(pool, g){
+  const base = META[pool] || META.snack;
+  return {
+    ing: g.ing || base.ing,
+    mat: g.mat || base.mat,
+    flav: g.flav || base.flav,
+    fresh: g.fresh || base.fresh
+  };
+}
+
+/* ================= 店铺与菜品数据 ================= */
+const shopGoods = [
+  {
+    shop:"雪之王｜奶茶饮品", emoji:"🧋", pool:"milktea",
+    goods:[
+      {n:"秋日板栗奶绿",d:"香甜板栗泥搭配清新绿茶，秋日限定",p:16},
+      {n:"圣诞热可可",d:"浓郁可可配棉花糖，圣诞暖心款",p:18},
+      {n:"芋泥波波奶茶",d:"手捣厚芋泥，Q弹波波",p:15},
+      {n:"杨枝甘露",d:"新鲜芒果加西柚粒，酸甜清爽",p:17},
+      {n:"珍珠奶茶",d:"经典黑糖珍珠，奶香醇厚",p:12},
+      {n:"四季春奶青",d:"清茶底，清爽不腻",p:13},
+      {n:"黑糖脏脏奶",d:"黑糖挂壁，丝滑鲜奶",p:16},
+      {n:"蜜桃乌龙奶",d:"水蜜桃果香，乌龙茶底",p:15},
+      {n:"葡萄多肉",d:"巨峰葡萄果肉，冰沙款",p:19},
+      {n:"青提气泡奶",d:"脆甜青提，气泡口感",p:18},
+      {n:"桂花酒酿奶",d:"秋日桂花酒酿，淡淡酒香",p:16},
+      {n:"南瓜厚乳",d:"绵密南瓜，厚乳丝滑",p:17},
+      {n:"肉桂苹果热奶",d:"苹果加肉桂，圣诞氛围感",p:19},
+      {n:"焦糖红茶奶",d:"焦香焦糖红茶",p:14},
+      {n:"椰椰芒芒",d:"椰乳加芒果果肉",p:16},
+      {n:"抹茶奶冻",d:"宇治抹茶，Q弹奶冻",p:17},
+      {n:"红豆麻薯奶茶",d:"绵密红豆，拉丝麻薯",p:16},
+      {n:"荔枝甘露",d:"荔枝果肉，清甜水润",p:18},
+      {n:"草莓奶冻",d:"新鲜草莓，奶香浓郁",p:19},
+      {n:"香芋西米露",d:"香芋加西米，温饮好喝",p:14},
+      {n:"薄荷奶绿",d:"清凉薄荷，解暑神器",p:13},
+      {n:"红枣姜奶",d:"暖身红枣生姜奶",p:15},
+      {n:"板栗可可",d:"板栗泥混合可可，秋冬款",p:18},
+      {n:"橙子热奶",d:"鲜橙片热煮，维C满满",p:16},
+      {n:"碧根果奶盖茶",d:"碧根果碎咸奶盖",p:17},
+      {n:"糯糯紫米奶",d:"软糯紫米，香甜饱腹",p:15},
+      {n:"茉莉奶白",d:"茉莉鲜茶，奶味柔和",p:14},
+      {n:"凤梨果奶",d:"酸甜凤梨，果香浓郁",p:16},
+      {n:"海盐芝士奶绿",d:"咸香芝士奶盖",p:16},
+      {n:"红薯烤奶",d:"烤红薯风味，秋冬暖饮",p:15}
+    ]
+  },
+  {
+    shop:"甜屿烘焙｜蛋糕甜点", emoji:"🎂", pool:"cake",
+    goods:[
+      {n:"可露丽",d:"外壳焦脆内里软糯，香草香气浓郁",p:12},
+      {n:"黑森林蛋糕",d:"巧克力胚加樱桃酒渍果肉，经典德式",p:28},
+      {n:"提拉米苏",d:"马斯卡彭芝士，咖啡酒香",p:26},
+      {n:"红丝绒蛋糕",d:"丝绒胚，乳酪奶油",p:24},
+      {n:"巴斯克芝士蛋糕",d:"焦香流心芝士",p:22},
+      {n:"芒果千层",d:"薄饼皮，新鲜芒果果肉",p:30},
+      {n:"草莓慕斯",d:"酸甜草莓慕斯，清爽不腻",p:25},
+      {n:"抹茶慕斯",d:"宇治抹茶，微苦回甘",p:24},
+      {n:"巧克力熔岩",d:"切开流心巧克力",p:20},
+      {n:"海盐奥利奥慕斯",d:"咸甜奥利奥奶油",p:23},
+      {n:"榴莲千层",d:"金枕榴莲果肉，浓郁香甜",p:35},
+      {n:"伯爵红茶蛋糕",d:"伯爵茶奶油，淡淡茶香",p:24},
+      {n:"椰子冻蛋糕",d:"椰香奶油搭配椰子冻",p:22},
+      {n:"树莓慕斯",d:"酸香树莓，颜值很高",p:26},
+      {n:"焦糖布丁蛋糕",d:"底层蛋糕上层焦糖布丁",p:21},
+      {n:"芝士卷",d:"松软蛋糕卷，芝士内馅",p:18},
+      {n:"抹茶毛巾卷",d:"薄皮毛巾卷，抹茶奶油",p:17},
+      {n:"巧克力毛巾卷",d:"可可皮，巧克力奶油",p:17},
+      {n:"草莓毛巾卷",d:"草莓果肉毛巾卷",p:18},
+      {n:"桂花酒酿蛋糕",d:"桂花酒酿奶油，秋日款",p:25},
+      {n:"南瓜乳酪蛋糕",d:"香甜南瓜，乳酪夹心",p:23},
+      {n:"肉桂苹果蛋糕",d:"苹果肉桂，圣诞风味",p:26},
+      {n:"姜饼蛋糕",d:"姜饼风味奶油，圣诞限定",p:24},
+      {n:"覆盆子达克瓦兹",d:"杏仁饼体，覆盆子夹心",p:14},
+      {n:"马卡龙（2枚）",d:"法式马卡龙，低糖版",p:16},
+      {n:"香芋蛋糕",d:"手捣香芋奶油，绵密香甜",p:23},
+      {n:"豆乳盒子",d:"黄豆粉加豆乳奶油，软糯",p:19},
+      {n:"生椰拿铁蛋糕",d:"生椰加咖啡奶油",p:24},
+      {n:"青提慕斯",d:"阳光青提果肉，清爽",p:25},
+      {n:"蓝莓芝士",d:"新鲜蓝莓，重芝士",p:26},
+      {n:"核桃布朗尼",d:"扎实布朗尼，核桃仁",p:20},
+      {n:"香橙蛋糕",d:"橙皮风味，清新解腻",p:22},
+      {n:"黑芝麻慕斯",d:"浓郁黑芝麻，醇香",p:23},
+      {n:"咸蛋黄蛋糕",d:"流沙咸蛋黄夹心",p:24},
+      {n:"杨枝甘露蛋糕",d:"芒果西柚奶油",p:27},
+      {n:"荔枝玫瑰蛋糕",d:"荔枝果肉玫瑰奶油",p:26},
+      {n:"蜜桃蛋糕",d:"水蜜桃果肉，清甜",p:25},
+      {n:"菠萝翻转蛋糕",d:"烤菠萝，黄油蛋糕",p:22},
+      {n:"奶盖舒芙蕾",d:"软fufu舒芙蕾，奶盖",p:21},
+      {n:"可可脆蛋糕",d:"巧克力脆片夹心",p:23},
+      {n:"开心果慕斯",d:"开心果泥，香气浓郁",p:28},
+      {n:"无花果蛋糕",d:"新鲜无花果，低糖奶油",p:27},
+      {n:"杏仁蛋糕",d:"扁桃仁薄片，黄油香",p:22},
+      {n:"黑米蛋糕",d:"黑米夹层，低糖健康",p:20},
+      {n:"桂花栗子蛋糕",d:"栗子泥加桂花，秋日",p:26},
+      {n:"雪花圣诞蛋糕",d:"奶油雪顶，圣诞装饰",p:30},
+      {n:"柠檬磅蛋糕",d:"湿润磅蛋糕，柠檬清香",p:16},
+      {n:"香蕉核桃蛋糕",d:"香蕉果肉核桃，香甜",p:18},
+      {n:"桑葚慕斯",d:"黑桑葚果肉，酸甜浓郁",p:24},
+      {n:"玫瑰乳酪蛋糕",d:"重乳酪，玫瑰花瓣",p:25}
+    ]
+  },
+  {
+    shop:"鲜饺小馆｜各式饺子", emoji:"🥟", pool:"dumpling",
+    goods:[
+      {n:"白菜猪肉水饺",d:"新鲜大白菜搭配五花肉，皮薄馅足",p:14},
+      {n:"韭菜鸡蛋水饺",d:"鲜嫩韭菜，土鸡蛋，清淡爽口",p:12},
+      {n:"虾仁三鲜水饺",d:"大颗虾仁加木耳香菇，鲜掉眉毛",p:22},
+      {n:"玉米猪肉水饺",d:"甜玉米搭配猪肉，清甜多汁",p:15},
+      {n:"芹菜牛肉水饺",d:"西芹配黄牛肉，香而不腻",p:18},
+      {n:"荠菜猪肉水饺",d:"野生荠菜，清香独特",p:16},
+      {n:"香菇鸡肉水饺",d:"鲜香菇鸡胸肉，低脂",p:14},
+      {n:"酸菜猪肉水饺",d:"东北酸菜，酸香开胃",p:15},
+      {n:"大葱牛肉水饺",d:"大葱提香，牛肉紧实",p:19},
+      {n:"鲅鱼水饺",d:"新鲜鲅鱼肉，胶东特色",p:24}
+    ]
+  },
+  {
+    shop:"沸腾鲜锅｜火锅食材", emoji:"🍲", pool:"hotpot",
+    goods:[
+      {n:"谷饲肥牛卷",d:"谷饲肥牛，红白纹理均匀，鲜嫩多汁",p:26},
+      {n:"内蒙肥羊卷",d:"内蒙羔羊肉，膻味轻，奶香柔和",p:24},
+      {n:"黑毛猪五花肉",d:"五花层次分明，油脂丰富，涮后焦香",p:22},
+      {n:"手打青虾滑",d:"青虾手工捶打，Q弹紧实，无过多淀粉",p:20},
+      {n:"嫩鸭血",d:"新鲜鸭血，滑嫩不易碎，入口顺滑",p:8},
+      {n:"脱水贡菜",d:"脱水贡菜泡发，脆爽嘎吱响",p:10},
+      {n:"水牛毛肚",d:"水牛毛肚，叶片厚实，七上八下脆嫩",p:32},
+      {n:"鲜猪黄喉",d:"新鲜猪黄喉，脆弹爽口，久煮不老",p:28},
+      {n:"新鲜鸭肠",d:"新鲜鸭肠，干净无异味，涮完脆嫩",p:20},
+      {n:"腌制嫩牛肉片",d:"牛里脊薄片，提前腌制，滑嫩入味",p:24},
+      {n:"巴沙鱼片",d:"无刺鱼片，肉质细嫩，低脂",p:16},
+      {n:"金针菇",d:"新鲜菌菇，菌香浓郁，吸满汤汁",p:7},
+      {n:"娃娃菜",d:"本地娃娃菜，清甜水润",p:6},
+      {n:"洪湖藕片",d:"洪湖莲藕，脆甜爽口",p:8},
+      {n:"黄心土豆片",d:"黄心土豆，粉糯香甜",p:5},
+      {n:"手工鲜豆皮",d:"手工豆皮，豆香醇厚，吸汤一绝",p:9},
+      {n:"鱼豆腐",d:"鱼糜制作，弹嫩带鲜",p:11},
+      {n:"海带苗",d:"嫩海带芽，滑嫩鲜爽",p:7},
+      {n:"厚肉鲜香菇",d:"厚肉香菇，香气浓郁",p:8},
+      {n:"响铃卷",d:"油炸腐皮卷，一泡吸满汤汁",p:12}
+    ]
+  },
+  {
+    shop:"新疆美好餐厅", emoji:"🫓", pool:"snack",
+    goods:[
+      {n:"新疆烤包子",d:"羊肉洋葱馅，外皮酥脆",p:12},
+      {n:"羊肉手抓饭",d:"羊肉胡萝卜焖饭，油香浓郁",p:20},
+      {n:"皮牙子拌面",d:"洋葱羊肉拌面，面条筋道",p:26},
+      {n:"羊肉串5串",d:"炭火烤羊肉，孜然香浓",p:18},
+      {n:"馕坑烤馕",d:"芝麻大馕，越嚼越香",p:6},
+      {n:"大盘鸡单人份",d:"鸡肉土豆配皮带面，香辣浓郁",p:42}
+    ]
+  },
+  {
+    shop:"潮汕风味小馆", emoji:"🦪", pool:"snack",
+    goods:[
+      {n:"潮汕手打牛肉丸",d:"手工捶打牛丸，爆汁Q弹",p:18},
+      {n:"潮汕蚝烙",d:"鲜蚝加地瓜粉煎制，外酥里嫩",p:22},
+      {n:"卤鹅拼盘",d:"潮汕卤狮头鹅，香气浓郁",p:38},
+      {n:"腐乳饼",d:"咸甜交织特色糕点",p:9},
+      {n:"清汤牛肉粿条",d:"牛骨清汤，鲜嫩牛肉",p:24},
+      {n:"粿汁",d:"米浆粿片配卤大肠",p:16}
+    ]
+  },
+  {
+    shop:"东北老味馆", emoji:"🥩", pool:"snack",
+    goods:[
+      {n:"老式锅包肉",d:"酸甜酥脆，老式做法",p:24},
+      {n:"酸菜白肉锅",d:"酸菜加五花肉，暖锅",p:26},
+      {n:"杀猪菜单人份",d:"血肠酸菜白肉，地道东北味",p:34},
+      {n:"大饭包",d:"白菜叶包米饭土豆泥",p:14},
+      {n:"酸甜冷面",d:"酸甜冰爽荞麦冷面",p:16},
+      {n:"地三鲜",d:"茄子土豆青椒，咸香下饭",p:24}
+    ]
+  },
+  {
+    shop:"鮨味日本寿司餐厅", emoji:"🍣", pool:"sushi",
+    goods:[
+      {n:"三文鱼握寿司",d:"厚切三文鱼，醋饭温润，入口绵软",p:18},
+      {n:"金枪鱼握寿司",d:"蓝鳍金枪鱼大腹，油脂丰腴",p:26},
+      {n:"甜虾握寿司",d:"北极甜虾，鲜甜弹嫩",p:16},
+      {n:"北极贝握寿司",d:"爽脆清甜，红白相间",p:16},
+      {n:"鳗鱼握寿司",d:"蒲烧鳗鱼，酱汁浓郁微甜",p:18},
+      {n:"玉子烧握寿司",d:"厚蛋烧，微甜松软",p:10},
+      {n:"鲷鱼握寿司",d:"真鲷白身鱼，清爽细腻",p:16},
+      {n:"章鱼握寿司",d:"鲜章鱼，脆弹有嚼劲",p:14},
+      {n:"扇贝握寿司",d:"北海道扇贝，鲜甜多汁",p:18},
+      {n:"鱼子军舰",d:"飞鱼籽，粒粒爆脆",p:15},
+      {n:"海胆军舰",d:"马粪海胆，绵密鲜甜",p:28},
+      {n:"蟹肉军舰",d:"松叶蟹肉，清甜细腻",p:16},
+      {n:"黄瓜军舰",d:"清爽黄瓜碎，解腻开胃",p:10},
+      {n:"加州卷",d:"蟹柳牛油果黄瓜，经典美式卷",p:22},
+      {n:"三文鱼牛油果卷",d:"三文鱼配牛油果，绵密顺滑",p:24},
+      {n:"鳗鱼黄瓜卷",d:"蒲烧鳗鱼配黄瓜，酱香十足",p:22},
+      {n:"芝士虾卷",d:"鲜虾裹芝士，炙烤拉丝",p:24},
+      {n:"天妇罗卷",d:"炸虾天妇罗卷，外酥里嫩",p:26},
+      {n:"蟹柳沙拉卷",d:"蟹柳配沙拉酱，清爽适口",p:18},
+      {n:"梅子小卷",d:"酸梅小卷，开胃解腻",p:12},
+      {n:"纳豆卷",d:"拉丝纳豆，日式经典",p:14},
+      {n:"黄瓜小卷",d:"脆黄瓜细卷，清爽素卷",p:10},
+      {n:"金枪鱼小卷",d:"金枪鱼肉细卷，鱼香浓郁",p:14},
+      {n:"三文鱼刺身拼盘",d:"厚切三文鱼三枚，油脂饱满",p:32},
+      {n:"金枪鱼刺身拼盘",d:"金枪鱼刺身五枚，肉质紧实",p:38},
+      {n:"甜虾刺身",d:"去壳甜虾，冰鲜甜润",p:22},
+      {n:"北极贝刺身",d:"鲜北极贝，爽脆无腥",p:20},
+      {n:"鲷鱼刺身",d:"白身鲷鱼薄片，清淡鲜甜",p:20},
+      {n:"章鱼刺身",d:"鲜章鱼薄片，脆弹爽口",p:18},
+      {n:"炙烤三文鱼寿司",d:"喷枪炙烤表面，焦香微焦",p:20},
+      {n:"炙烤鳗鱼寿司",d:"鳗鱼表面炙烤，酱汁焦香",p:20},
+      {n:"鹅肝握寿司",d:"香煎鹅肝配握寿司，奢华一口",p:32},
+      {n:"牛肉握寿司",d:"和牛薄片炙烤，奶香肉香",p:30},
+      {n:"鳗鱼饭",d:"蒲烧鳗鱼盖饭，酱汁拌饭",p:38},
+      {n:"三文鱼茶泡饭",d:"热茶冲泡，清淡暖胃",p:22},
+      {n:"海鲜盖饭",d:"多种刺身铺盖米饭，料足丰盛",p:42},
+      {n:"日式炸鸡块",d:"外脆里嫩，配黄芥末酱",p:20},
+      {n:"烤鳗鱼",d:"整条蒲烧鳗鱼，酱汁油亮",p:45},
+      {n:"味噌汤",d:"豆腐海带味噌汤，暖胃标配",p:8},
+      {n:"海藻沙拉",d:"中华海草，酸甜爽脆",p:12},
+      {n:"芥末章鱼",d:"芥末小章鱼，Q弹微冲",p:14},
+      {n:"土豆沙拉",d:"日式土豆泥沙拉，绵密香甜",p:12},
+      {n:"日式煎饺",d:"锅贴煎饺，底部焦脆",p:16},
+      {n:"烤秋刀鱼",d:"盐烤秋刀鱼，配萝卜泥",p:22},
+      {n:"玉子烧",d:"蜂蜜厚蛋烧，层层松软",p:12},
+      {n:"茶碗蒸",d:"滑嫩鸡蛋羹，含虾仁香菇",p:16},
+      {n:"芒果布丁",d:"芒果果肉布丁，清甜滑嫩",p:12},
+      {n:"抹茶冰淇淋",d:"宇治抹茶冰淇淋，微苦回甘",p:14},
+      {n:"蟹腿肉握寿司",d:"雪蟹腿肉，鲜甜饱满",p:20},
+      {n:"梅子清酒冻",d:"梅子风味果冻，清爽收尾",p:12}
+    ]
+  },
+  {
+    shop:"东北二哈烧烤", emoji:"🍢", pool:"bbq",
+    goods:[
+      {n:"烤羊肉串",d:"内蒙羊肉块，炭火孜然，肥瘦相间",p:4},
+      {n:"烤牛肉串",d:"鲜牛肉串，腌制入味，嫩而不柴",p:5},
+      {n:"烤五花肉",d:"五花薄片，烤到焦香，肥而不腻",p:4},
+      {n:"烤鸡翅中",d:"奥尔良腌料，外皮焦嫩多汁",p:6},
+      {n:"烤鸡胗",d:"脆韧鸡胗，香辣有嚼头",p:4},
+      {n:"烤鸡心",d:"新鲜鸡心，烤后紧实入味",p:4},
+      {n:"烤鸡皮",d:"鸡皮烤到酥脆，油香满口",p:3},
+      {n:"烤鸡架",d:"整只鸡架手撕，孜然辣椒",p:15},
+      {n:"烤脆骨",d:"猪脆骨，嘎嘣脆香",p:5},
+      {n:"烤排骨",d:"精排段，酱香腌制，肉嫩脱骨",p:12},
+      {n:"烤猪蹄",d:"卤后再烤，外皮胶糯",p:18},
+      {n:"烤脆皮肠",d:"台式烤肠，开花焦香",p:5},
+      {n:"烤板筋",d:"牛板筋片，香辣耐嚼",p:5},
+      {n:"烤腰子",d:"鲜羊腰，烤到外焦里嫩",p:12},
+      {n:"烤鱿鱼须",d:"鱿鱼须，Q弹香辣",p:8},
+      {n:"烤鱿鱼板",d:"整只鱿鱼板，刷酱炭烤",p:15},
+      {n:"烤大虾",d:"鲜虾串烤，鲜甜弹牙",p:10},
+      {n:"烤扇贝",d:"蒜蓉粉丝扇贝，蒜香浓郁",p:12},
+      {n:"烤生蚝",d:"蒜蓉生蚝，鲜嫩多汁",p:12},
+      {n:"烤扇贝肉",d:"纯扇贝肉串，肥美鲜甜",p:10},
+      {n:"烤茄子",d:"整根茄子铺蒜蓉肉末，软嫩入味",p:12},
+      {n:"烤韭菜",d:"韭菜刷油炭烤，鲜香下饭",p:6},
+      {n:"烤金针菇",d:"锡纸金针菇，蒜蓉香辣",p:8},
+      {n:"烤土豆片",d:"薄土豆片，烤到微焦",p:5},
+      {n:"烤青椒",d:"整根青椒，烤出虎皮",p:4},
+      {n:"烤玉米",d:"甜玉米段，刷黄油烤制",p:7},
+      {n:"烤馒头片",d:"馒头片刷酱，外脆内软",p:4},
+      {n:"烤面包片",d:"吐司片抹黄油，甜香酥脆",p:5},
+      {n:"烤豆角",d:"长豆角炭烤，干香入味",p:6},
+      {n:"烤香菇",d:"鲜香菇烤出汁水，鲜香",p:7},
+      {n:"烤娃娃菜",d:"娃娃菜蒜蓉烤制，清甜",p:6},
+      {n:"烤藕片",d:"脆藕片，香辣爽脆",p:5},
+      {n:"烤豆干",d:"薄豆干烤到起泡，酱香",p:5},
+      {n:"烤干豆腐卷",d:"干豆腐卷香菜葱丝，卷烤",p:6},
+      {n:"烤蚕蛹",d:"东北特色蚕蛹，高蛋白焦香",p:10},
+      {n:"烤鸡脖子",d:"鸡脖子卤烤，啃着过瘾",p:6},
+      {n:"烤牛肉筋",d:"牛筋肉串，筋道弹牙",p:6},
+      {n:"烤板筋片",d:"大片板筋，香辣有嚼劲",p:5},
+      {n:"烤鳕鱼",d:"狭鳕鱼块，鱼肉细嫩",p:12},
+      {n:"烤多春鱼",d:"满籽多春鱼，香酥连骨吃",p:12},
+      {n:"凉拌黄瓜",d:"拍黄瓜蒜香，清爽解腻",p:8},
+      {n:"花生毛豆拼盘",d:"卤花生配毛豆，下酒小菜",p:10},
+      {n:"烤实蛋",d:"东北实蛋串，Q弹咸香",p:5},
+      {n:"烤红肠",d:"哈尔滨红肠切片炭烤",p:8},
+      {n:"烤酸菜",d:"东北酸菜烤串，酸香开胃",p:6},
+      {n:"蒜香烤茄子",d:"铺满蒜蓉肉末，软烂入味",p:12},
+      {n:"锡纸花甲",d:"锡纸花甲粉丝，鲜辣滚烫",p:18},
+      {n:"锡纸豆腐",d:"嫩豆腐锡纸烤，酱汁入味",p:10},
+      {n:"烤烧饼",d:"芝麻烧饼炭烤，外酥内软",p:5},
+      {n:"烤面筋",d:"大面筋串，刷红油撒料",p:5}
+    ]
+  },
+  {
+    shop:"西域新疆餐厅", emoji:"🫓", pool:"xinjiang",
+    goods:[
+      {n:"烤羊肉包子",d:"羊肉洋葱馅，外皮酥脆掉渣",p:12},
+      {n:"羊肉手抓饭",d:"羊肉胡萝卜焖饭，油香浓郁",p:20},
+      {n:"皮牙子拌面",d:"洋葱羊肉拌面，面条筋道",p:26},
+      {n:"红柳羊肉串",d:"红柳枝串羊肉，烟熏果香",p:6},
+      {n:"馕坑烤馕",d:"芝麻大馕，越嚼越香",p:6},
+      {n:"大盘鸡单人份",d:"鸡肉土豆配皮带面，香辣浓郁",p:42},
+      {n:"手抓肉",d:"清炖羊腿肉，蘸盐吃原味",p:38},
+      {n:"烤羊排",d:"整块羊排炭烤，外焦里嫩",p:48},
+      {n:"新疆炒米粉",d:"粗米粉爆辣炒，配芹菜鸡肉",p:22},
+      {n:"丁丁炒面",d:"面丁配羊肉蔬菜，锅气十足",p:24},
+      {n:"羊杂汤",d:"羊肚羊肠羊杂，汤鲜肉香",p:18},
+      {n:"丸子汤",d:"牛肉丸子配粉丝豆腐汤",p:16},
+      {n:"烤羊腿肉串",d:"大块羊腿肉，炭火直烤",p:8},
+      {n:"面肺子米肠子",d:"新疆特色杂碎，酸辣入味",p:16},
+      {n:"新疆老酸奶",d:"手工凝固酸奶，浓稠奶香",p:10},
+      {n:"咸奶茶",d:"砖茶熬煮，加盐酥油，暖身",p:8},
+      {n:"葡萄干抓饭",d:"甜葡萄干配胡萝卜羊肉饭",p:20},
+      {n:"炒烤肉",d:"羊肉片爆炒，孜然洋葱",p:28},
+      {n:"薄皮包子",d:"蒸制薄皮包羊肉，皮薄多汁",p:14},
+      {n:"烤鸡蛋",d:"馕坑烤蛋，配孜然辣椒",p:6}
+    ]
+  }
 ];
 
-// 骑手随机事件 20条（友好正向）
-const riderEvents = [
-  {title:"骑手取餐啦",text:"骑手已经成功取到你的外卖，准备出发！",opts:[]},
-  {title:"路上遇到一只小猫",text:"骑手在路上碰到一只乖乖的小猫咪，蹲在路边看他。",opts:["跟小猫说你好","继续骑行"]},
-  {title:"下起大雨",text:"突然下起大雨，骑手的雨衣有点薄，正在犹豫要不要躲雨。",opts:["给骑手空降一把雨伞","继续冒雨骑行"]},
-  {title:"骑手心情低落",text:"骑手今天有点难过，偷偷抹眼泪，还在坚持送单。",opts:["送一个电子拥抱安慰他","继续骑行送单"]},
-  {title:"路边老奶奶摔倒",text:"路边老奶奶不小心滑倒了，没有重伤，骑手犹豫要不要上前帮忙。",opts:["停下来扶老奶奶","先送订单，叫路人帮忙"]},
-  {title:"骑手想上厕所",text:"骑手有点内急，附近刚好有公共厕所。",opts:["允许骑手先去方便","让骑手坚持送到再去"]},
-  {title:"偶遇心动女同学",text:"骑手在路上偶遇上学时心动的女生，擦肩而过。",opts:["鼓励上前打个招呼","安静路过不打扰"]},
-  {title:"骑手肚子饿啦",text:"骑手跑了好多单，肚子咕咕叫，旁边有便利店。",opts:["请骑手吃一个电子包子","继续赶路送单"]},
-  {title:"路口红绿灯卡住",text:"路口信号灯故障，大家都在缓慢通行。",opts:["耐心等待","提醒骑手小心绕行"]},
-  {title:"看到流浪小狗",text:"路边有一只流浪小狗摇尾巴跟着骑手。",opts:["投喂电子火腿肠","轻轻挥手告别小狗"]},
-  {title:"风太大帽子吹飞",text:"一阵大风，骑手头盔旁边的帽子吹跑了。",opts:["帮骑手捡帽子","慢慢骑车不用急"]},
-  {title:"路过花店",text:"路边花店花香飘过来，骑手停下看了一眼鲜花。",opts:["送骑手一朵电子小花","继续赶路"]},
-  {title:"自行车链条掉了",text:"骑手电动车链条松动，需要简单修理一下。",opts:["耐心等待修理","骑手简单处理尽快出发"]},
-  {title:"小朋友挥手打招呼",text:"路边小朋友开心对着骑手挥手。",opts:["骑手挥手回应小朋友","微笑点头继续走"]},
-  {title:"看到彩虹啦",text:"雨停之后天边出现漂亮彩虹，骑手停下来欣赏。",opts:["一起欣赏彩虹","看完彩虹继续送"]},
-  {title:"买到热乎乎豆浆",text:"骑手路过早餐店，闻到豆浆香味。",opts:["请骑手喝一杯热豆浆","抓紧送单"]},
-  {title:"路面有小水坑",text:"前面路面有积水，担心溅到路人。",opts:["减速慢行避开行人","慢慢骑过去"]},
-  {title:"遇到同行骑手",text:"碰到别的骑手伙伴，互相打了招呼。",opts:["让他们聊两句再走","简单问好继续赶路"]},
-  {title:"听见好听的歌",text:"街边小店正在放很好听的歌曲。",opts:["停下来听一小段","边听歌边骑行"]},
-  {title:"太阳很晒",text:"正午太阳火辣辣，骑手额头出汗了。",opts:["送电子遮阳帽","加快速度送到阴凉处"]}
-];
-
+/* ================= 状态与存储 ================= */
 let cart = [];
-let totalPrice = 0;
-let currentShopIndex = 0;
-let orderTimer = null;
-let statData = JSON.parse(localStorage.getItem("foodStat")) || {dayList:[],weekTotal:0,monthTotal:0,lastDate:""};
+let orderList = JSON.parse(localStorage.getItem("pigOrderList") || "[]");
+let saveRecord = JSON.parse(localStorage.getItem("pigSaveRecord") || "{}");
+let currentShop = -1;
+let currentSearch = "";
+let isComposing = false;
 
-const shopEl = document.getElementById("shopList");
-const foodEl = document.getElementById("foodList");
-const searchEl = document.getElementById("searchInput");
-const cartNumEl = document.getElementById("cartNum");
-const cartTotalEl = document.getElementById("cartTotal");
-const submitBtn = document.getElementById("submitBtn");
-const modal = document.getElementById("modal");
-const modalTitle = document.getElementById("modalTitle");
-const modalText = document.getElementById("modalText");
-const modalBtns = document.getElementById("modalBtns");
+const shopSide = document.getElementById("shopSide");
+const goodsSide = document.getElementById("goodsSide");
 
-// 渲染左侧店铺列表
-function renderShop(){
-  shopEl.innerHTML = "";
-  shopData.forEach((shop,idx)=>{
-    const div = document.createElement("div");
-    div.className = "shop-item"+(idx===currentShopIndex?" active":"");
-    div.innerText = shop.shopName;
-    div.onclick = ()=>{
-      currentShopIndex = idx;
-      renderShop();renderFood();
-    }
-    shopEl.appendChild(div);
-  })
-}
-
-// 渲染菜品（支持搜索）
-function renderFood(keyword=""){
-  foodEl.innerHTML = "";
-  const shop = shopData[currentShopIndex];
-  let foodList = shop.foods;
-  if(keyword.trim()){
-    let allFood = [];
-    shopData.forEach(s=> allFood = allFood.concat(s.foods));
-    foodList = allFood.filter(f=> f.name.includes(keyword) || f.desc.includes(keyword));
-  }
-  foodList.forEach(food=>{
+/* ================= 渲染：店铺列表 ================= */
+function renderShops(){
+  shopSide.innerHTML = "";
+  shopGoods.forEach((s, idx)=>{
     const card = document.createElement("div");
-    card.className="food-card";
+    card.className = "shop-card" + (idx===currentShop ? " active" : "");
     card.innerHTML = `
-    <div class="food-info">
-      <div class="food-name">${food.name}</div>
-      <div class="food-desc">${food.desc}</div>
-      <div class="food-price">¥${food.price.toFixed(2)}</div>
-    </div>
-    <div style="display:flex;align-items:center">
-      <button class="add-btn">+加入购物车</button>
-    </div>
-    `;
-    card.querySelector(".add-btn").onclick = ()=>{
-      cart.push(food);
-      totalPrice += food.price;
-      updateCart();
-    }
-    foodEl.appendChild(card);
-  })
+      <div class="shop-cover">
+        <div class="fallback">${s.emoji}</div>
+      </div>
+      <div class="shop-meta">
+        <div class="shop-name">${s.shop}</div>
+        <div class="shop-sub">共 ${s.goods.length} 道 · 模拟店铺</div>
+      </div>`;
+    card.onclick = ()=>openShop(idx);
+    shopSide.appendChild(card);
+  });
 }
 
-function updateCart(){
-  cartNumEl.innerText = cart.length;
-  cartTotalEl.innerText = totalPrice.toFixed(2);
+/* 菜品信息区：描述 + 食材 + 配料 + 风味 + 新鲜度 */
+function goodsInfoHtml(s, g, i, withShopName){
+  const meta = getMeta(s.pool, g);
+  const descExtra = withShopName ? ` · ${s.shop.split("｜")[0]}` : "";
+  return `
+    <div class="goods-info">
+      <div class="goods-name">${g.n}</div>
+      <div class="goods-desc">${g.d}${descExtra}</div>
+      <div class="meta-row"><b>食材：</b>${meta.ing}</div>
+      <div class="meta-row"><b>配料：</b>${meta.mat}</div>
+      <div class="tag-chips"><span class="tag-chip">风味：${meta.flav.join(" / ")}</span></div>
+      <div class="fresh-tag">🌿 新鲜度：${meta.fresh}</div>
+      <div class="goods-foot">
+        <div class="goods-price">¥${g.p.toFixed(2)}</div>
+        <button class="add-btn" data-shop="${s.shop}" data-name="${g.n}" data-price="${g.p}">+</button>
+      </div>
+    </div>`;
 }
 
-// 弹窗控制
-function openModal(title,text,opts,callback){
-  modalTitle.innerText = title;
-  modalText.innerText = text;
-  modalBtns.innerHTML = "";
-  modal.style.display="flex";
-  if(opts && opts.length>0){
-    opts.forEach(opt=>{
-      const btn = document.createElement("button");
-      btn.className="opt-btn";
-      btn.innerText = opt;
-      btn.onclick = ()=>{
-        modal.style.display="none";
-        if(callback) callback();
+/* ================= 渲染：单店菜品 ================= */
+function renderShop(idx){
+  const s = shopGoods[idx];
+  goodsSide.innerHTML = `
+    <div class="shop-head">
+      <button class="back-btn" id="backBtn">‹ 返回店铺</button>
+      <div class="shop-head-title">${s.shop}</div>
+    </div>
+    <div class="goods-grid"></div>`;
+  const grid = goodsSide.querySelector(".goods-grid");
+  s.goods.forEach((g, i)=>{
+    const div = document.createElement("div");
+    div.className = "goods-item";
+    div.innerHTML = `
+      <div class="goods-img">
+        <div class="fallback">${foodIcon(s.pool, i)}</div>
+      </div>
+      ${goodsInfoHtml(s, g, i, false)}`;
+    grid.appendChild(div);
+  });
+  bindAddButtons(grid);
+  document.getElementById("backBtn").onclick = backToList;
+}
+
+/* ================= 渲染：搜索结果（跨店） ================= */
+function renderSearchResult(){
+  const kw = currentSearch.trim();
+  let html = `<div class="shop-head"><div class="shop-head-title">搜索结果：“${kw}”</div></div><div class="goods-grid">`;
+  let count = 0;
+  shopGoods.forEach((s)=>{
+    s.goods.forEach((g, i)=>{
+      const meta = getMeta(s.pool, g);
+      const metaText = `${meta.ing}${meta.mat}${meta.flav.join("")}${meta.fresh}`;
+      if(s.shop.includes(kw) || g.n.includes(kw) || g.d.includes(kw) || metaText.includes(kw)){
+        count++;
+        html += `
+        <div class="goods-item">
+          <div class="goods-img">
+            <div class="fallback">${foodIcon(s.pool, i)}</div>
+          </div>
+          ${goodsInfoHtml(s, g, i, true)}
+        </div>`;
       }
-      modalBtns.appendChild(btn);
-    })
-  }else{
-    const btn = document.createElement("button");
-    btn.className="opt-btn primary";
-    btn.innerText = "知道啦";
+    });
+  });
+  html += `</div>`;
+  if(count === 0) html = `<div class="empty-tip">没有找到相关菜品，换个关键词试试</div>`;
+  goodsSide.innerHTML = html;
+  bindAddButtons(goodsSide);
+}
+
+/* ================= 视图切换 ================= */
+function openShop(idx){
+  currentShop = idx;
+  currentSearch = "";
+  document.getElementById("search-input").value = "";
+  renderShops();
+  renderShop(idx);
+  shopSide.classList.add("hidden");
+  goodsSide.classList.remove("hidden");
+}
+function backToList(){
+  currentShop = -1;
+  currentSearch = "";
+  document.getElementById("search-input").value = "";
+  renderShops();
+  goodsSide.classList.add("hidden");
+  shopSide.classList.remove("hidden");
+}
+function refreshView(){
+  if(currentSearch.trim()){
+    goodsSide.classList.remove("hidden");
+    shopSide.classList.add("hidden");
+    renderSearchResult();
+  } else if(currentShop >= 0){
+    renderShop(currentShop);
+  } else {
+    renderShops();
+  }
+}
+
+/* ================= 购物车 ================= */
+function bindAddButtons(scope){
+  scope.querySelectorAll(".add-btn").forEach(btn=>{
     btn.onclick = ()=>{
-      modal.style.display="none";
-      if(callback) callback();
+      cart.push({shop:btn.dataset.shop, name:btn.dataset.name, price:Number(btn.dataset.price)});
+      updateCart();
+    };
+  });
+}
+function updateCart(){
+  document.getElementById("cartNum").innerText = cart.length;
+  const total = cart.reduce((s,i)=>s+i.price,0);
+  document.getElementById("cartTotal").innerText = total.toFixed(2);
+}
+
+/* ================= 标签切换 ================= */
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.onclick = ()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    const t = tab.dataset.tab;
+    document.getElementById("foodPage").style.display = t==="food" ? "block" : "none";
+    document.getElementById("orderPage").style.display = t==="order" ? "block" : "none";
+    if(t==="order") renderOrderList();
+  };
+});
+
+/* ================= 搜索（兼容中文输入法） ================= */
+const searchInput = document.getElementById("search-input");
+searchInput.addEventListener("compositionstart", ()=>{ isComposing = true; });
+searchInput.addEventListener("compositionend", ()=>{
+  isComposing = false;
+  currentSearch = searchInput.value;
+  refreshView();
+});
+searchInput.addEventListener("input", ()=>{
+  if(isComposing) return;
+  currentSearch = searchInput.value;
+  refreshView();
+});
+
+/* ================= 订单历史 ================= */
+function renderOrderList(){
+  const wrap = document.getElementById("orderListWrap");
+  if(orderList.length === 0){
+    wrap.innerHTML = `<div class="empty-tip">暂无历史订单</div>`;
+    return;
+  }
+  wrap.innerHTML = "";
+  [...orderList].reverse().forEach(ord=>{
+    let itemHtml = "";
+    ord.list.forEach(i=>{
+      itemHtml += `<div class="order-line">▪ ${i.name}  ¥${i.price.toFixed(2)}</div>`;
+    });
+    wrap.innerHTML += `
+    <div class="order-item">
+      <div class="order-time">下单时间：${ord.timeStr}</div>
+      <div class="order-shopname">订单编号：${ord.id}</div>
+      ${itemHtml}
+      <div class="order-sum">订单总金额：¥${ord.total.toFixed(2)}</div>
+    </div>`;
+  });
+}
+
+/* ================= 结算下单 ================= */
+document.getElementById("settleBtn").onclick = ()=>{
+  if(cart.length === 0) return alert("购物车是空的");
+  const total = cart.reduce((s,i)=>s+i.price,0);
+  const now = new Date();
+  const newOrder = {
+    id:"ORD"+Date.now(),
+    time:now.getTime(),
+    timeStr:now.toLocaleString(),
+    list:[...cart],
+    total
+  };
+  orderList.push(newOrder);
+  localStorage.setItem("pigOrderList", JSON.stringify(orderList));
+
+  const dayKey = now.toLocaleDateString();
+  if(!saveRecord[dayKey]) saveRecord[dayKey] = 0;
+  saveRecord[dayKey] += total;
+  localStorage.setItem("pigSaveRecord", JSON.stringify(saveRecord));
+
+  cart = [];
+  updateCart();
+  startDelivery(newOrder);
+};
+
+/* ================= 配送流程 + 骑手奇遇 ================= */
+let deliveryTimer = null;
+function startDelivery(order){
+  const modal = document.getElementById("orderModal");
+  const stepWrap = document.getElementById("orderSteps");
+  modal.style.display = "flex";
+  const steps = [
+    {txt:"商家已接单", done:true},
+    {txt:"骑手正在赶往商家取餐", done:false},
+    {txt:"骑手已取餐，正在配送", done:false},
+    {txt:"订单送达！猪瘾压制成功 ✅", done:false}
+  ];
+  function renderStep(){
+    stepWrap.innerHTML = "";
+    steps.forEach((s,idx)=>{
+      const cls = s.done ? "step done" : (!s.done && steps.findIndex(x=>!x.done)===idx ? "step current" : "step");
+      stepWrap.innerHTML += `<div class="${cls}">${s.done?"✅":"⏳"} ${s.txt}</div>`;
+    });
+  }
+  renderStep();
+  let stepIndex = 1;
+  function nextStep(){
+    if(stepIndex >= steps.length) return;
+    steps[stepIndex].done = true;
+    renderStep();
+    stepIndex++;
+    if(Math.random() < EVENT_CHANCE){
+      const evt = getRandomWeightEvent();
+      showEvent(evt, ()=>{ deliveryTimer = setTimeout(nextStep, 4000+Math.random()*4000); });
+    } else {
+      deliveryTimer = setTimeout(nextStep, 4000+Math.random()*4000);
     }
-    modalBtns.appendChild(btn);
   }
+  deliveryTimer = setTimeout(nextStep, 3000);
 }
 
-// 骑手事件轮询
-function startRiderEvent(){
-  let i=0;
-  function nextEvent(){
-    if(i>=riderEvents.length){
-      openModal("订单送达！","你的外卖送到门口啦！✅ 假装收到，猪瘾压制成功！",[],()=>{
-        saveStat();
-        cart=[];totalPrice=0;updateCart();
-      })
-      return;
-    }
-    const e = riderEvents[i];
-    openModal(e.title,e.text,e.opts,()=>{
-      i++;
-      orderTimer = setTimeout(nextEvent, 30*1000);
-    })
-  }
-  nextEvent();
+function showEvent(evt, cb){
+  clearTimeout(deliveryTimer);
+  const m = document.getElementById("eventModal");
+  document.getElementById("eventTitle").innerText = evt.title;
+  document.getElementById("eventDesc").innerText = evt.desc;
+  document.getElementById("optA").innerText = evt.optA;
+  document.getElementById("optB").innerText = evt.optB;
+  m.style.display = "flex";
+  function close(){ m.style.display = "none"; cb(); }
+  document.getElementById("optA").onclick = ()=>{ alert(evt.resA); close(); };
+  document.getElementById("optB").onclick = ()=>{ alert(evt.resB); close(); };
 }
 
-// 保存统计，每日弹窗
-function saveStat(){
-  const today = new Date().toLocaleDateString();
-  if(statData.lastDate !== today){
-    statData.lastDate = today;
-    const dayCost = totalPrice;
-    statData.dayList.push({date:today,cost:dayCost});
-    // 简单周月统计
-    statData.weekTotal = statData.dayList.slice(-7).reduce((s,i)=>s+i.cost,0);
-    statData.monthTotal = statData.dayList.slice(-30).reduce((s,i)=>s+i.cost,0);
-    localStorage.setItem("foodStat",JSON.stringify(statData));
-    openModal("✅ 今日猪瘾治疗结算",
-`今天假装下单节省：¥${dayCost.toFixed(2)}
-近7周累计节省：¥${statData.weekTotal.toFixed(2)}
-近30天累计节省：¥${statData.monthTotal.toFixed(2)}
-忍住没有真下单，太棒啦！`,[])
-  }
-}
+document.getElementById("remindBtn").onclick = ()=>{
+  alert("📢 已经帮你提醒骑手啦！骑手收到催单消息，会加快速度~");
+};
+document.getElementById("closeOrderModal").onclick = ()=>{
+  document.getElementById("orderModal").style.display = "none";
+};
 
-submitBtn.onclick = ()=>{
-  if(cart.length===0){alert("购物车是空的！");return}
-  openModal("下单成功！","订单提交成功，骑手正在接单，每隔30分钟会更新骑手动态，可以催单哦！",["开始等待外卖","催单"],()=>{
-    startRiderEvent();
-  })
-}
-searchEl.oninput = (e)=>{
-  renderFood(e.target.value.trim())
-}
-
-renderShop();renderFood();
-</script>
-</body>
-</html>
+/* ================= 统计 ================= */
+document.getElementById("stat-btn").onclick = ()=>{
+  const now = new Date();
+  const todayStr = now.toLocaleDateString();
+  let day = saveRecord[todayStr] || 0, week = 0, month = 0;
+  Object.entries(saveRecord).forEach(([k,v])=>{
+    const d = new Date(k);
+    const diff = (now - d)/(1000*60*60*24);
+    if(diff < 7) week += v;
+    if(diff < 31) month += v;
+  });
