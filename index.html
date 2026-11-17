@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>猪瘾治疗 · 模拟外卖</title>
+<title>🍔 猪瘾治疗 · 模拟外卖</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#ff4444">
 <style>
@@ -122,186 +122,26 @@ if ('serviceWorker' in navigator) {
 }
 
 const eventList = [
-  {
-    title:"🐱 骑手在路上遇到一只小猫咪",
-    desc:"路边有一只软乎乎小猫蹲在路中间看骑手，骑手停下了车",
-    optA:"跟小猫说你好",
-    optB:"继续骑行",
-    resA:"骑手蹲下来跟小猫打招呼，小猫蹭了蹭裤腿，治愈一下继续赶路",
-    resB:"骑手轻轻绕开小猫，抓紧继续配送",
-    weight: 10
-  },
-  {
-    title:"🌧️ 突然下起大雨",
-    desc:"乌云翻涌，大雨说来就来，骑手正在寻找躲雨的屋檐",
-    optA:"给骑手空降一把雨伞",
-    optB:"冒雨继续骑行",
-    resA:"✨ 你空投了一把雨伞！骑手撑伞安心赶路，心里暖暖的",
-    resB:"骑手裹紧外套，冒着雨水继续往前冲",
-    weight: 5
-  },
-  {
-    title:"😔 骑手情绪低落，正在悄悄难过",
-    desc:"骑手今天跑了很多单，有点疲惫委屈，停下来抹眼泪",
-    optA:"送一个电子拥抱",
-    optB:"调整心情继续骑",
-    resA:"🤗 你送出电子拥抱！骑手收到安慰，擦干眼泪继续出发",
-    resB:"骑手深呼吸，调整好情绪继续往前配送",
-    weight: 6
-  },
-  {
-    title:"👵 路边老奶奶提着重物走不动",
-    desc:"老奶奶拎着一大袋菜，脚步缓慢，看起来很吃力",
-    optA:"骑手上前帮忙提一段路",
-    optB:"不耽误订单，继续赶路",
-    resA:"骑手热心帮奶奶把东西送到小区门口，奶奶连连道谢",
-    resB:"骑手心里有点过意不去，只能加速尽快给你送到",
-    weight: 2
-  },
-  {
-    title:"🚽 骑手有点内急",
-    desc:"骑了好久，骑手想上厕所，附近正好有公共卫生间",
-    optA:"允许骑手去方便一下",
-    optB:"先送完这一单再说",
-    resA:"骑手安心去卫生间休整片刻，一身轻松继续出发",
-    resB:"骑手忍住不适，加快速度，优先把你的外卖送到",
-    weight: 7
-  },
-  {
-    title:"💐 偶遇有好感的女同学",
-    desc:"路边站着骑手很久没见、心里有好感的女生，正在等公交",
-    optA:"停下来打个招呼",
-    optB:"微笑路过不耽搁",
-    resA:"骑手停下简单聊了两句，心里甜甜的，带着好心情赶路",
-    resB:"骑手悄悄看了一眼，轻轻挥手，继续专心配送",
-    weight: 3
-  },
-  {
-    title:"🍜 骑手肚子饿啦",
-    desc:"忙了一中午还没吃饭，路过小吃店，香味扑面而来",
-    optA:"允许骑手简单吃点东西垫肚子",
-    optB:"送完再吃饭",
-    resA:"骑手快速买了个包子几口吃完，补充体力继续跑单",
-    resB:"骑手摸摸空空的肚子，决定送完这一单再去吃饭",
-    weight: 6
-  },
-  {
-    title:"🐦 小鸟落在路边飞不起来",
-    desc:"一只幼鸟掉落在人行道，扑腾翅膀却无法起飞",
-    optA:"停下来小心照看小鸟",
-    optB:"继续赶路",
-    resA:"骑手小心把小鸟放到旁边安全的灌木丛，才重新出发",
-    resB:"骑手看了一眼，只能继续优先配送你的订单",
-    weight: 4
-  },
-  {
-    title:"🚦 等红灯，肩膀很僵硬",
-    desc:"长时间握车把手，骑手肩颈发酸，红灯时间比较长",
-    optA:"趁红灯活动舒展一下",
-    optB:"原地待命准备出发",
-    resA:"骑手转动脖子、甩甩手臂，紧绷的肩膀舒服不少",
-    resB:"骑手保持握车姿势，绿灯一亮立刻出发",
-    weight: 9
-  },
-  {
-    title:"🎵 街头歌手正在弹唱",
-    desc:"路口有歌手弹吉他唱歌，旋律温柔好听",
-    optA:"停下来听一小段",
-    optB:"不驻足，直接经过",
-    resA:"骑手静静听了一小段歌，烦恼都少了很多",
-    resB:"骑手欣赏地望了一眼，继续向前骑行",
-    weight: 7
-  },
-  {
-    title:"🧊 天很热，路过便利店",
-    desc:"太阳火辣辣，骑手满头大汗，便利店就在旁边",
-    optA:"买一瓶冰水降温",
-    optB:"坚持送到再喝水",
-    resA:"骑手买了冰水喝上几口，燥热缓解很多",
-    resB:"骑手擦擦汗水，忍着口渴继续赶路",
-    weight: 8
-  },
-  {
-    title:"🐶 温顺小狗拦在车前",
-    desc:"一只性格温顺的狗狗摇尾巴，好奇凑过来打量骑手",
-    optA:"停下来摸摸小狗",
-    optB:"缓慢绕行过去",
-    resA:"骑手伸手轻轻摸了摸狗头，小狗开心摇尾巴",
-    resB:"骑手慢慢减速，平稳绕开可爱小狗继续走",
-    weight: 10
-  },
-  {
-    title:"📱 家人发来消息",
-    desc:"骑手家人发来消息，问今天能不能早点回家吃饭",
-    optA:"停下来回复消息",
-    optB:"等送完再回消息",
-    resA:"骑手简短回复家人，心里暖暖的继续跑单",
-    resB:"骑手先把手机放回口袋，打算送完这一单再回消息",
-    weight: 5
-  },
-  {
-    title:"🍃 路边小花很好看",
-    desc:"路边一簇小花开得鲜亮，看着让人心情变好",
-    optA:"摘一朵送给自己",
-    optB:"欣赏一下继续走",
-    resA:"骑手小心摘了一朵小花放在车筐，一路带着花香赶路",
-    resB:"骑手多看了两眼漂亮小花，带着好心情继续配送",
-    weight: 8
-  },
-  {
-    title:"🛠️ 车筐有点松动",
-    desc:"电动车车筐螺丝松了，晃动得有点明显",
-    optA:"停下来拧紧螺丝",
-    optB:"先将就送到",
-    resA:"骑手拿出随身小工具快速拧紧，车子骑起来稳很多",
-    resB:"骑手小心骑行，尽量稳住车筐，防止餐品晃动",
-    weight: 2
-  },
-  {
-    title:"☁️ 天边晚霞绝美",
-    desc:"天边铺满橘红色晚霞，景色特别治愈",
-    optA:"停下来看一会晚霞",
-    optB:"抓紧往前赶",
-    resA:"骑手停下静静欣赏晚霞，一天的疲惫消散大半",
-    resB:"骑手匆匆瞥一眼晚霞，继续奔赴目的地",
-    weight: 9
-  },
-  {
-    title:"🧺 路边烤红薯飘香",
-    desc:"烤红薯小摊热气腾腾，香甜气味飘很远",
-    optA:"买一块红薯暖暖身子",
-    optB:"忍住不吃，先送单",
-    resA:"骑手买了一块热乎乎红薯，捧着暖手又解馋",
-    resB:"骑手咽了咽口水，继续往前骑行",
-    weight: 4
-  },
-  {
-    title:"🧢 帽子被风吹落",
-    desc:"一阵大风把骑手的帽子吹到路边",
-    optA:"停车捡回帽子",
-    optB:"不捡了继续走",
-    resA:"骑手停下车捡回帽子戴好，挡住刺眼阳光",
-    resB:"骑手索性迎着风，不回头，继续向前骑行",
-    weight: 3
-  },
-  {
-    title:"📖 小朋友挥手打招呼",
-    desc:"路边坐着看书的小朋友，笑着朝骑手挥手",
-    optA:"挥手回应小朋友",
-    optB:"点头路过",
-    resA:"骑手笑着挥手回应小朋友，小朋友笑得更开心啦",
-    resB:"骑手温柔点头示意，慢慢骑过去",
-    weight: 9
-  },
-  {
-    title:"🥤 店家递来免费温水",
-    desc:"路过小店，店主看见骑手辛苦，主动递一杯温水",
-    optA:"收下这杯温水",
-    optB:"婉拒好意，继续赶路",
-    resA:"骑手接过温水道谢，喝下之后浑身舒服",
-    resB:"骑手笑着感谢店主好意，礼貌婉拒继续配送",
-    weight: 6
-  }
+  {title:"🐱 骑手在路上遇到一只小猫咪",desc:"路边有一只软乎乎小猫蹲在路中间看骑手，骑手停下了车",optA:"跟小猫说你好",optB:"继续骑行",resA:"骑手蹲下来跟小猫打招呼，小猫蹭了蹭裤腿，治愈一下继续赶路",resB:"骑手轻轻绕开小猫，抓紧继续配送",weight: 10},
+  {title:"🌧️ 突然下起大雨",desc:"乌云翻涌，大雨说来就来，骑手正在寻找躲雨的屋檐",optA:"给骑手空降一把雨伞",optB:"冒雨继续骑行",resA:"✨ 你空投了一把雨伞！骑手撑伞安心赶路，心里暖暖的",resB:"骑手裹紧外套，冒着雨水继续往前冲",weight: 5},
+  {title:"😔 骑手情绪低落，正在悄悄难过",desc:"骑手今天跑了很多单，有点疲惫委屈，停下来抹眼泪",optA:"送一个电子拥抱",optB:"调整心情继续骑",resA:"🤗 你送出电子拥抱！骑手收到安慰，擦干眼泪继续出发",resB:"骑手深呼吸，调整好情绪继续往前配送",weight: 6},
+  {title:"👵 路边老奶奶提着重物走不动",desc:"老奶奶拎着一大袋菜，脚步缓慢，看起来很吃力",optA:"骑手上前帮忙提一段路",optB:"不耽误订单，继续赶路",resA:"骑手热心帮奶奶把东西送到小区门口，奶奶连连道谢",resB:"骑手心里有点过意不去，只能加速尽快给你送到",weight: 2},
+  {title:"🚽 骑手有点内急",desc:"骑了好久，骑手想上厕所，附近正好有公共卫生间",optA:"允许骑手去方便一下",optB:"先送完这一单再说",resA:"骑手安心去卫生间休整片刻，一身轻松继续出发",resB:"骑手忍住不适，加快速度，优先把你的外卖送到",weight: 7},
+  {title:"💐 偶遇有好感的女同学",desc:"路边站着骑手很久没见、心里有好感的女生，正在等公交",optA:"停下来打个招呼",optB:"微笑路过不耽搁",resA:"骑手停下简单聊了两句，心里甜甜的，带着好心情赶路",resB:"骑手悄悄看了一眼，轻轻挥手，继续专心配送",weight: 3},
+  {title:"🍜 骑手肚子饿啦",desc:"忙了一中午还没吃饭，路过小吃店，香味扑面而来",optA:"允许骑手简单吃点东西垫肚子",optB:"送完再吃饭",resA:"骑手快速买了个包子几口吃完，补充体力继续跑单",resB:"骑手摸摸空空的肚子，决定送完这一单再去吃饭",weight: 6},
+  {title:"🐦 小鸟落在路边飞不起来",desc:"一只幼鸟掉落在人行道，扑腾翅膀却无法起飞",optA:"停下来小心照看小鸟",optB:"继续赶路",resA:"骑手小心把小鸟放到旁边安全的灌木丛，才重新出发",resB:"骑手看了一眼，只能继续优先配送你的订单",weight: 4},
+  {title:"🚦 等红灯，肩膀很僵硬",desc:"长时间握车把手，骑手肩颈发酸，红灯时间比较长",optA:"趁红灯活动舒展一下",optB:"原地待命准备出发",resA:"骑手转动脖子、甩甩手臂，紧绷的肩膀舒服不少",resB:"骑手保持握车姿势，绿灯一亮立刻出发",weight: 9},
+  {title:"🎵 街头歌手正在弹唱",desc:"路口有歌手弹吉他唱歌，旋律温柔好听",optA:"停下来听一小段",optB:"不驻足，直接经过",resA:"骑手静静听了一小段歌，烦恼都少了很多",resB:"骑手欣赏地望了一眼，继续向前骑行",weight: 7},
+  {title:"🧊 天很热，路过便利店",desc:"太阳火辣辣，骑手满头大汗，便利店就在旁边",optA:"买一瓶冰水降温",optB:"坚持送到再喝水",resA:"骑手买了冰水喝上几口，燥热缓解很多",resB:"骑手擦擦汗水，忍着口渴继续赶路",weight: 8},
+  {title:"🐶 温顺小狗拦在车前",desc:"一只性格温顺的狗狗摇尾巴，好奇凑过来打量骑手",optA:"停下来摸摸小狗",optB:"缓慢绕行过去",resA:"骑手伸手轻轻摸了摸狗头，小狗开心摇尾巴",resB:"骑手慢慢减速，平稳绕开可爱小狗继续走",weight: 10},
+  {title:"📱 家人发来消息",desc:"骑手家人发来消息，问今天能不能早点回家吃饭",optA:"停下来回复消息",optB:"等送完再回消息",resA:"骑手简短回复家人，心里暖暖的继续跑单",resB:"骑手先把手机放回口袋，打算送完这一单再回消息",weight: 5},
+  {title:"🍃 路边小花很好看",desc:"路边一簇小花开得鲜亮，看着让人心情变好",optA:"摘一朵送给自己",optB:"欣赏一下继续走",resA:"骑手小心摘了一朵小花放在车筐，一路带着花香赶路",resB:"骑手多看了两眼漂亮小花，带着好心情继续配送",weight: 8},
+  {title:"🛠️ 车筐有点松动",desc:"电动车车筐螺丝松了，晃动得有点明显",optA:"停下来拧紧螺丝",optB:"先将就送到",resA:"骑手拿出随身小工具快速拧紧，车子骑起来稳很多",resB:"骑手小心骑行，尽量稳住车筐，防止餐品晃动",weight: 2},
+  {title:"☁️ 天边晚霞绝美",desc:"天边铺满橘红色晚霞，景色特别治愈",optA:"停下来看一会晚霞",optB:"抓紧往前赶",resA:"骑手停下静静欣赏晚霞，一天的疲惫消散大半",resB:"骑手匆匆瞥一眼晚霞，继续奔赴目的地",weight: 9},
+  {title:"🧺 路边烤红薯飘香",desc:"烤红薯小摊热气腾腾，香甜气味飘很远",optA:"买一块红薯暖暖身子",optB:"忍住不吃，先送单",resA:"骑手买了一块热乎乎红薯，捧着暖手又解馋",resB:"骑手咽了咽口水，继续往前骑行",weight: 4},
+  {title:"🧢 帽子被风吹落",desc:"一阵大风把骑手的帽子吹到路边",optA:"停车捡回帽子",optB:"不捡了继续走",resA:"骑手停下车捡回帽子戴好，挡住刺眼阳光",resB:"骑手索性迎着风，不回头，继续向前骑行",weight: 3},
+  {title:"📖 小朋友挥手打招呼",desc:"路边坐着看书的小朋友，笑着朝骑手挥手",optA:"挥手回应小朋友",optB:"点头路过",resA:"骑手笑着挥手回应小朋友，小朋友笑得更开心啦",resB:"骑手温柔点头示意，慢慢骑过去",weight: 9},
+  {title:"🥤 店家递来免费温水",desc:"路过小店，店主看见骑手辛苦，主动递一杯温水",optA:"收下这杯温水",optB:"婉拒好意，继续赶路",resA:"骑手接过温水道谢，喝下之后浑身舒服",resB:"骑手笑着感谢店主好意，礼貌婉拒继续配送",weight: 6}
 ];
 
 function getRandomWeightEvent() {
@@ -315,154 +155,380 @@ function getRandomWeightEvent() {
 }
 const EVENT_CHANCE = 0.35;
 
-// 店铺分组商品，全部带图片链接
+// 店铺分组商品，【国内稳定picsum图片链接】
 const shopGoods = [
   {
     shopName:"雪之王｜奶茶饮品",
     goods:[
-      {name:"秋日板栗奶绿",desc:"香甜板栗泥搭配清新绿茶，秋日限定",price:16,img:"https://images.unsplash.com/photo-1558857563-b371033873b8?w=400"},
-      {name:"圣诞热可可",desc:"浓郁可可+棉花糖，圣诞暖心款",price:18,img:"https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=400"},
-      {name:"芋泥波波奶茶",desc:"手捣厚芋泥，Q弹波波",price:15,img:"https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400"},
-      {name:"杨枝甘露",desc:"新鲜芒果+西柚粒，酸甜清爽",price:17,img:"https://images.unsplash.com/photo-1607430744713-881fd595fa7a?w=400"},
-      {name:"珍珠奶茶",desc:"经典黑糖珍珠，奶香醇厚",price:12,img:"https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400"},
-      {name:"四季春奶青",desc:"清茶底，清爽不腻",price:13,img:"https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400"},
-      {name:"黑糖脏脏奶",desc:"黑糖挂壁，丝滑鲜奶",price:16,img:"https://images.unsplash.com/photo-1582793988951-9aed5509eb97?w=400"},
-      {name:"蜜桃乌龙奶",desc:"水蜜桃果香，乌龙茶底",price:15,img:"https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400"},
-      {name:"葡萄多肉",desc:"巨峰葡萄果肉，冰沙款",price:19,img:"https://images.unsplash.com/photo-1594552072238-b8a33785b261?w=400"},
-      {name:"青提气泡奶",desc:"脆甜青提，气泡口感",price:18,img:"https://images.unsplash.com/photo-1604908176997-125159d40819?w=400"},
-      {name:"桂花酒酿奶",desc:"秋日桂花酒酿，淡淡酒香",price:16,img:"https://images.unsplash.com/photo-1607430744713-881fd595fa7a?w=400"},
-      {name:"南瓜厚乳",desc:"绵密南瓜，厚乳丝滑",price:17,img:"https://images.unsplash.com/photo-1599422477007-35a09a5a8010?w=400"},
-      {name:"肉桂苹果热奶",desc:"苹果+肉桂，圣诞氛围感",price:19,img:"https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400"},
-      {name:"焦糖红茶奶",desc:"焦香焦糖红茶",price:14,img:"https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
-      {name:"椰椰芒芒",desc:"椰乳+芒果果肉",price:16,img:"https://images.unsplash.com/photo-1607430744713-881fd595fa7a?w=400"},
-      {name:"抹茶奶冻",desc:"宇治抹茶，Q弹奶冻",price:17,img:"https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400"},
-      {name:"红豆麻薯奶茶",desc:"绵密红豆，拉丝麻薯",price:16,img:"https://images.unsplash.com/photo-1558857563-b371033873b8?w=400"},
-      {name:"荔枝甘露",desc:"荔枝果肉，清甜水润",price:18,img:"https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400"},
-      {name:"草莓奶冻",desc:"新鲜草莓，奶香浓郁",price:19,img:"https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400"},
-      {name:"香芋西米露",desc:"香芋+西米，温饮好喝",price:14,img:"https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400"},
-      {name:"薄荷奶绿",desc:"清凉薄荷，解暑神器",price:13,img:"https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400"},
-      {name:"红枣姜奶",desc:"暖身红枣生姜奶",price:15,img:"https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=400"},
-      {name:"板栗可可",desc:"板栗泥混合可可，秋冬款",price:18,img:"https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=400"},
-      {name:"橙子热奶",desc:"鲜橙片热煮，维C满满",price:16,img:"https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400"},
-      {name:"碧根果奶盖茶",desc:"碧根果碎咸奶盖",price:17,img:"https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"},
-      {name:"糯糯紫米奶",desc:"软糯紫米，香甜饱腹",price:15,img:"https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400"},
-      {name:"茉莉奶白",desc:"茉莉鲜茶，奶味柔和",price:14,img:"https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400"},
-      {name:"凤梨果奶",desc:"酸甜凤梨，果香浓郁",price:16,img:"https://images.unsplash.com/photo-1607430744713-881fd595fa7a?w=400"},
-      {name:"海盐芝士奶绿",desc:"咸香芝士奶盖",price:16,img:"https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400"},
-      {name:"红薯烤奶",desc:"烤红薯风味，秋冬暖饮",price:15,img:"https://images.unsplash.com/photo-1599422477007-35a09a5a8010?w=400"}
+      {name:"秋日板栗奶绿",desc:"香甜板栗泥搭配清新绿茶，秋日限定",price:16,img:"https://picsum.photos/id/225/400/300"},
+      {name:"圣诞热可可",desc:"浓郁可可+棉花糖，圣诞暖心款",price:18,img:"https://picsum.photos/id/226/400/300"},
+      {name:"芋泥波波奶茶",desc:"手捣厚芋泥，Q弹波波",price:15,img:"https://picsum.photos/id/227/400/300"},
+      {name:"杨枝甘露",desc:"新鲜芒果+西柚粒，酸甜清爽",price:17,img:"https://picsum.photos/id/228/400/300"},
+      {name:"珍珠奶茶",desc:"经典黑糖珍珠，奶香醇厚",price:12,img:"https://picsum.photos/id/229/400/300"},
+      {name:"四季春奶青",desc:"清茶底，清爽不腻",price:13,img:"https://picsum.photos/id/230/400/300"},
+      {name:"黑糖脏脏奶",desc:"黑糖挂壁，丝滑鲜奶",price:16,img:"https://picsum.photos/id/231/400/300"},
+      {name:"蜜桃乌龙奶",desc:"水蜜桃果香，乌龙茶底",price:15,img:"https://picsum.photos/id/232/400/300"},
+      {name:"葡萄多肉",desc:"巨峰葡萄果肉，冰沙款",price:19,img:"https://picsum.photos/id/233/400/300"},
+      {name:"青提气泡奶",desc:"脆甜青提，气泡口感",price:18,img:"https://picsum.photos/id/234/400/300"},
+      {name:"桂花酒酿奶",desc:"秋日桂花酒酿，淡淡酒香",price:16,img:"https://picsum.photos/id/235/400/300"},
+      {name:"南瓜厚乳",desc:"绵密南瓜，厚乳丝滑",price:17,img:"https://picsum.photos/id/236/400/300"},
+      {name:"肉桂苹果热奶",desc:"苹果+肉桂，圣诞氛围感",price:19,img:"https://picsum.photos/id/237/400/300"},
+      {name:"焦糖红茶奶",desc:"焦香焦糖红茶",price:14,img:"https://picsum.photos/id/238/400/300"},
+      {name:"椰椰芒芒",desc:"椰乳+芒果果肉",price:16,img:"https://picsum.photos/id/239/400/300"},
+      {name:"抹茶奶冻",desc:"宇治抹茶，Q弹奶冻",price:17,img:"https://picsum.photos/id/240/400/300"},
+      {name:"红豆麻薯奶茶",desc:"绵密红豆，拉丝麻薯",price:16,img:"https://picsum.photos/id/241/400/300"},
+      {name:"荔枝甘露",desc:"荔枝果肉，清甜水润",price:18,img:"https://picsum.photos/id/242/400/300"},
+      {name:"草莓奶冻",desc:"新鲜草莓，奶香浓郁",price:19,img:"https://picsum.photos/id/243/400/300"},
+      {name:"香芋西米露",desc:"香芋+西米，温饮好喝",price:14,img:"https://picsum.photos/id/244/400/300"},
+      {name:"薄荷奶绿",desc:"清凉薄荷，解暑神器",price:13,img:"https://picsum.photos/id/245/400/300"},
+      {name:"红枣姜奶",desc:"暖身红枣生姜奶",price:15,img:"https://picsum.photos/id/246/400/300"},
+      {name:"板栗可可",desc:"板栗泥混合可可，秋冬款",price:18,img:"https://picsum.photos/id/247/400/300"},
+      {name:"橙子热奶",desc:"鲜橙片热煮，维C满满",price:16,img:"https://picsum.photos/id/248/400/300"},
+      {name:"碧根果奶盖茶",desc:"碧根果碎咸奶盖",price:17,img:"https://picsum.photos/id/249/400/300"},
+      {name:"糯糯紫米奶",desc:"软糯紫米，香甜饱腹",price:15,img:"https://picsum.photos/id/250/400/300"},
+      {name:"茉莉奶白",desc:"茉莉鲜茶，奶味柔和",price:14,img:"https://picsum.photos/id/251/400/300"},
+      {name:"凤梨果奶",desc:"酸甜凤梨，果香浓郁",price:16,img:"https://picsum.photos/id/252/400/300"},
+      {name:"海盐芝士奶绿",desc:"咸香芝士奶盖",price:16,img:"https://picsum.photos/id/253/400/300"},
+      {name:"红薯烤奶",desc:"烤红薯风味，秋冬暖饮",price:15,img:"https://picsum.photos/id/254/400/300"}
     ]
   },
   {
     shopName:"甜屿烘焙｜蛋糕甜点",
     goods:[
-      {name:"可露丽",desc:"外壳焦脆内里软糯，香草香气浓郁",price:12,img:"https://images.unsplash.com/photo-1606066889831-35faf6fa6ff6?w=400"},
-      {name:"黑森林蛋糕",desc:"巧克力胚+樱桃酒渍果肉，经典德式",price:28,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"提拉米苏",desc:"马斯卡彭芝士，咖啡酒香",price:26,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"},
-      {name:"红丝绒蛋糕",desc:"丝绒胚，乳酪奶油",price:24,img:"https://images.unsplash.com/photo-1586788680434-30d324b2d46f?w=400"},
-      {name:"巴斯克芝士蛋糕",desc:"焦香流心芝士",price:22,img:"https://images.unsplash.com/photo-1606066889831-35faf6fa6ff6?w=400"},
-      {name:"芒果千层",desc:"薄饼皮，新鲜芒果果肉",price:30,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"草莓慕斯",desc:"酸甜草莓慕斯，清爽不腻",price:25,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"抹茶慕斯",desc:"宇治抹茶，微苦回甘",price:24,img:"https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400"},
-      {name:"巧克力熔岩",desc:"切开流心巧克力",price:20,img:"https://images.unsplash.com/photo-1606066889831-35faf6fa6ff6?w=400"},
-      {name:"海盐奥利奥慕斯",desc:"咸甜奥利奥奶油",price:23,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"榴莲千层",desc:"金枕榴莲果肉，浓郁香甜",price:35,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"伯爵红茶蛋糕",desc:"伯爵茶奶油，淡淡茶香",price:24,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"},
-      {name:"椰子冻蛋糕",desc:"椰香奶油搭配椰子冻",price:22,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"树莓慕斯",desc:"酸香树莓，颜值很高",price:26,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"焦糖布丁蛋糕",desc:"底层蛋糕上层焦糖布丁",price:21,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"},
-      {name:"芝士卷",desc:"松软蛋糕卷，芝士内馅",price:18,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"毛巾卷抹茶",desc:"薄皮毛巾卷，抹茶奶油",price:17,img:"https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400"},
-      {name:"毛巾卷巧克力",desc:"可可皮，巧克力奶油",price:17,img:"https://images.unsplash.com/photo-1606066889831-35faf6fa6ff6?w=400"},
-      {name:"毛巾卷草莓",desc:"草莓果肉毛巾卷",price:18,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"桂花酒酿蛋糕",desc:"桂花酒酿奶油，秋日款",price:25,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"},
-      {name:"南瓜乳酪蛋糕",desc:"香甜南瓜，乳酪夹心",price:23,img:"https://images.unsplash.com/photo-1599422477007-35a09a5a8010?w=400"},
-      {name:"肉桂苹果蛋糕",desc:"苹果肉桂，圣诞风味",price:26,img:"https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400"},
-      {name:"姜饼蛋糕",desc:"姜饼风味奶油，圣诞限定",price:24,img:"https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400"},
-      {name:"覆盆子达克瓦兹",desc:"杏仁饼体，覆盆子夹心",price:14,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"马卡龙（2枚）",desc:"法式马卡龙，低糖版",price:16,img:"https://images.unsplash.com/photo-1569864358642-9d1684040f43?w=400"},
-      {name:"香芋蛋糕",desc:"手捣香芋奶油，绵密香甜",price:23,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"豆乳盒子",desc:"黄豆粉+豆乳奶油，软糯",price:19,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"},
-      {name:"生椰拿铁蛋糕",desc:"生椰+咖啡奶油",price:24,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"青提慕斯",desc:"阳光青提果肉，清爽",price:25,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"蓝莓芝士",desc:"新鲜蓝莓，重芝士",price:26,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"核桃布朗尼",desc:"扎实布朗尼，核桃仁",price:20,img:"https://images.unsplash.com/photo-1606066889831-35faf6fa6ff6?w=400"},
-      {name:"香橙蛋糕",desc:"橙皮风味，清新解腻",price:22,img:"https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400"},
-      {name:"黑芝麻慕斯",desc:"浓郁黑芝麻，醇香",price:23,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"},
-      {name:"咸蛋黄蛋糕",desc:"流沙咸蛋黄夹心",price:24,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"杨枝甘露蛋糕",desc:"芒果西柚奶油",price:27,img:"https://images.unsplash.com/photo-1607430744713-881fd595fa7a?w=400"},
-      {name:"荔枝玫瑰蛋糕",desc:"荔枝果肉玫瑰奶油",price:26,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"蜜桃蛋糕",desc:"水蜜桃果肉，清甜",price:25,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"菠萝翻转蛋糕",desc:"烤菠萝，黄油蛋糕",price:22,img:"https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400"},
-      {name:"奶盖舒芙蕾",desc:"软fufu舒芙蕾，奶盖",price:21,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"},
-      {name:"可可脆蛋糕",desc:"巧克力脆片夹心",price:23,img:"https://images.unsplash.com/photo-1606066889831-35faf6fa6ff6?w=400"},
-      {name:"开心果慕斯",desc:"开心果泥，香气浓郁",price:28,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"无花果蛋糕",desc:"新鲜无花果，低糖奶油",price:27,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"杏仁蛋糕",desc:"扁桃仁薄片，黄油香",price:22,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"},
-      {name:"黑米蛋糕",desc:"黑米夹层，低糖健康",price:20,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"桂花栗子蛋糕",desc:"栗子泥+桂花，秋日",price:26,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"},
-      {name:"雪花圣诞蛋糕",desc:"奶油雪顶，圣诞装饰",price:30,img:"https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400"},
-      {name:"柠檬磅蛋糕",desc:"湿润磅蛋糕，柠檬清香",price:16,img:"https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400"},
-      {name:"香蕉核桃蛋糕",desc:"香蕉果肉核桃，香甜",price:18,img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"},
-      {name:"桑葚慕斯",desc:"黑桑葚果肉，酸甜浓郁",price:24,img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"},
-      {name:"玫瑰乳酪蛋糕",desc:"重乳酪，玫瑰花瓣",price:25,img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"}
+      {name:"可露丽",desc:"外壳焦脆内里软糯，香草香气浓郁",price:12,img:"https://picsum.photos/id/260/400/300"},
+      {name:"黑森林蛋糕",desc:"巧克力胚+樱桃酒渍果肉，经典德式",price:28,img:"https://picsum.photos/id/261/400/300"},
+      {name:"提拉米苏",desc:"马斯卡彭芝士，咖啡酒香",price:26,img:"https://picsum.photos/id/262/400/300"},
+      {name:"红丝绒蛋糕",desc:"丝绒胚，乳酪奶油",price:24,img:"https://picsum.photos/id/263/400/300"},
+      {name:"巴斯克芝士蛋糕",desc:"焦香流心芝士",price:22,img:"https://picsum.photos/id/264/400/300"},
+      {name:"芒果千层",desc:"薄饼皮，新鲜芒果果肉",price:30,img:"https://picsum.photos/id/265/400/300"},
+      {name:"草莓慕斯",desc:"酸甜草莓慕斯，清爽不腻",price:25,img:"https://picsum.photos/id/266/400/300"},
+      {name:"抹茶慕斯",desc:"宇治抹茶，微苦回甘",price:24,img:"https://picsum.photos/id/267/400/300"},
+      {name:"巧克力熔岩",desc:"切开流心巧克力",price:20,img:"https://picsum.photos/id/268/400/300"},
+      {name:"海盐奥利奥慕斯",desc:"咸甜奥利奥奶油",price:23,img:"https://picsum.photos/id/269/400/300"},
+      {name:"榴莲千层",desc:"金枕榴莲果肉，浓郁香甜",price:35,img:"https://picsum.photos/id/270/400/300"},
+      {name:"伯爵红茶蛋糕",desc:"伯爵茶奶油，淡淡茶香",price:24,img:"https://picsum.photos/id/271/400/300"},
+      {name:"椰子冻蛋糕",desc:"椰香奶油搭配椰子冻",price:22,img:"https://picsum.photos/id/272/400/300"},
+      {name:"树莓慕斯",desc:"酸香树莓，颜值很高",price:26,img:"https://picsum.photos/id/273/400/300"},
+      {name:"焦糖布丁蛋糕",desc:"底层蛋糕上层焦糖布丁",price:21,img:"https://picsum.photos/id/274/400/300"},
+      {name:"芝士卷",desc:"松软蛋糕卷，芝士内馅",price:18,img:"https://picsum.photos/id/275/400/300"},
+      {name:"抹茶毛巾卷",desc:"薄皮毛巾卷，抹茶奶油",price:17,img:"https://picsum.photos/id/276/400/300"},
+      {name:"巧克力毛巾卷",desc:"可可皮，巧克力奶油",price:17,img:"https://picsum.photos/id/277/400/300"},
+      {name:"草莓毛巾卷",desc:"草莓果肉毛巾卷",price:18,img:"https://picsum.photos/id/278/400/300"},
+      {name:"桂花酒酿蛋糕",desc:"桂花酒酿奶油，秋日款",price:25,img:"https://picsum.photos/id/279/400/300"},
+      {name:"南瓜乳酪蛋糕",desc:"香甜南瓜，乳酪夹心",price:23,img:"https://picsum.photos/id/280/400/300"},
+      {name:"肉桂苹果蛋糕",desc:"苹果肉桂，圣诞风味",price:26,img:"https://picsum.photos/id/281/400/300"},
+      {name:"姜饼蛋糕",desc:"姜饼风味奶油，圣诞限定",price:24,img:"https://picsum.photos/id/282/400/300"},
+      {name:"覆盆子达克瓦兹",desc:"杏仁饼体，覆盆子夹心",price:14,img:"https://picsum.photos/id/283/400/300"},
+      {name:"马卡龙（2枚）",desc:"法式马卡龙，低糖版",price:16,img:"https://picsum.photos/id/284/400/300"},
+      {name:"香芋蛋糕",desc:"手捣香芋奶油，绵密香甜",price:23,img:"https://picsum.photos/id/285/400/300"},
+      {name:"豆乳盒子",desc:"黄豆粉+豆乳奶油，软糯",price:19,img:"https://picsum.photos/id/286/400/300"},
+      {name:"生椰拿铁蛋糕",desc:"生椰+咖啡奶油",price:24,img:"https://picsum.photos/id/287/400/300"},
+      {name:"青提慕斯",desc:"阳光青提果肉，清爽",price:25,img:"https://picsum.photos/id/288/400/300"},
+      {name:"蓝莓芝士",desc:"新鲜蓝莓，重芝士",price:26,img:"https://picsum.photos/id/289/400/300"},
+      {name:"核桃布朗尼",desc:"扎实布朗尼，核桃仁",price:20,img:"https://picsum.photos/id/290/400/300"},
+      {name:"香橙蛋糕",desc:"橙皮风味，清新解腻",price:22,img:"https://picsum.photos/id/291/400/300"},
+      {name:"黑芝麻慕斯",desc:"浓郁黑芝麻，醇香",price:23,img:"https://picsum.photos/id/292/400/300"},
+      {name:"咸蛋黄蛋糕",desc:"流沙咸蛋黄夹心",price:24,img:"https://picsum.photos/id/293/400/300"},
+      {name:"杨枝甘露蛋糕",desc:"芒果西柚奶油",price:27,img:"https://picsum.photos/id/294/400/300"},
+      {name:"荔枝玫瑰蛋糕",desc:"荔枝果肉玫瑰奶油",price:26,img:"https://picsum.photos/id/295/400/300"},
+      {name:"蜜桃蛋糕",desc:"水蜜桃果肉，清甜",price:25,img:"https://picsum.photos/id/296/400/300"},
+      {name:"菠萝翻转蛋糕",desc:"烤菠萝，黄油蛋糕",price:22,img:"https://picsum.photos/id/297/400/300"},
+      {name:"奶盖舒芙蕾",desc:"软fufu舒芙蕾，奶盖",price:21,img:"https://picsum.photos/id/298/400/300"},
+      {name:"可可脆蛋糕",desc:"巧克力脆片夹心",price:23,img:"https://picsum.photos/id/299/400/300"},
+      {name:"开心果慕斯",desc:"开心果泥，香气浓郁",price:28,img:"https://picsum.photos/id/300/400/300"},
+      {name:"无花果蛋糕",desc:"新鲜无花果，低糖奶油",price:27,img:"https://picsum.photos/id/301/400/300"},
+      {name:"杏仁蛋糕",desc:"扁桃仁薄片，黄油香",price:22,img:"https://picsum.photos/id/302/400/300"},
+      {name:"黑米蛋糕",desc:"黑米夹层，低糖健康",price:20,img:"https://picsum.photos/id/303/400/300"},
+      {name:"桂花栗子蛋糕",desc:"栗子泥+桂花，秋日",price:26,img:"https://picsum.photos/id/304/400/300"},
+      {name:"雪花圣诞蛋糕",desc:"奶油雪顶，圣诞装饰",price:30,img:"https://picsum.photos/id/305/400/300"},
+      {name:"柠檬磅蛋糕",desc:"湿润磅蛋糕，柠檬清香",price:16,img:"https://picsum.photos/id/306/400/300"},
+      {name:"香蕉核桃蛋糕",desc:"香蕉果肉核桃，香甜",price:18,img:"https://picsum.photos/id/307/400/300"},
+      {name:"桑葚慕斯",desc:"黑桑葚果肉，酸甜浓郁",price:24,img:"https://picsum.photos/id/308/400/300"},
+      {name:"玫瑰乳酪蛋糕",desc:"重乳酪，玫瑰花瓣",price:25,img:"https://picsum.photos/id/309/400/300"}
     ]
   },
   {
     shopName:"鲜饺小馆｜各式饺子",
     goods:[
-      {name:"白菜猪肉水饺",desc:"新鲜大白菜搭配五花肉，皮薄馅足",price:14,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
-      {name:"韭菜鸡蛋水饺",desc:"鲜嫩韭菜，土鸡蛋，清淡爽口",price:12,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
-      {name:"虾仁三鲜水饺",desc:"大颗虾仁+木耳香菇，鲜掉眉毛",price:22,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
-      {name:"玉米猪肉水饺",desc:"甜玉米搭配猪肉，清甜多汁",price:15,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
-      {name:"芹菜牛肉水饺",desc:"西芹配黄牛肉，香而不腻",price:18,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
-      {name:"荠菜猪肉水饺",desc:"野生荠菜，清香独特",price:16,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
-      {name:"香菇鸡肉水饺",desc:"鲜香菇鸡胸肉，低脂",price:14,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
-      {name:"酸菜猪肉水饺",desc:"东北酸菜，酸香开胃",price:15,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
-      {name:"大葱牛肉水饺",desc:"大葱提香，牛肉紧实",price:19,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"},
-      {name:"鲅鱼水饺",desc:"新鲜鲅鱼肉，胶东特色",price:24,img:"https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400"}
+      {name:"白菜猪肉水饺",desc:"新鲜大白菜搭配五花肉，皮薄馅足",price:14,img:"https://picsum.photos/id/310/400/300"},
+      {name:"韭菜鸡蛋水饺",desc:"鲜嫩韭菜，土鸡蛋，清淡爽口",price:12,img:"https://picsum.photos/id/311/400/300"},
+      {name:"虾仁三鲜水饺",desc:"大颗虾仁+木耳香菇，鲜掉眉毛",price:22,img:"https://picsum.photos/id/312/400/300"},
+      {name:"玉米猪肉水饺",desc:"甜玉米搭配猪肉，清甜多汁",price:15,img:"https://picsum.photos/id/313/400/300"},
+      {name:"芹菜牛肉水饺",desc:"西芹配黄牛肉，香而不腻",price:18,img:"https://picsum.photos/id/314/400/300"},
+      {name:"荠菜猪肉水饺",desc:"野生荠菜，清香独特",price:16,img:"https://picsum.photos/id/315/400/300"},
+      {name:"香菇鸡肉水饺",desc:"鲜香菇鸡胸肉，低脂",price:14,img:"https://picsum.photos/id/316/400/300"},
+      {name:"酸菜猪肉水饺",desc:"东北酸菜，酸香开胃",price:15,img:"https://picsum.photos/id/317/400/300"},
+      {name:"大葱牛肉水饺",desc:"大葱提香，牛肉紧实",price:19,img:"https://picsum.photos/id/318/400/300"},
+      {name:"鲅鱼水饺",desc:"新鲜鲅鱼肉，胶东特色",price:24,img:"https://picsum.photos/id/319/400/300"}
     ]
   },
   {
     shopName:"沸腾鲜锅｜火锅食材",
     goods:[
-      {name:"肥牛卷",desc:"谷饲肥牛，红白纹理均匀，下锅即熟，鲜嫩多汁",price:26,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"肥羊卷",desc:"内蒙羔羊肉，膻味轻，奶香柔和",price:24,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"黑毛猪五花肉",desc:"五花层次分明，油脂丰富，涮后焦香",price:22,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"手打虾滑",desc:"青虾手工捶打，Q弹紧实，无过多淀粉",price:20,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"嫩鸭血",desc:"新鲜鸭血，滑嫩不易碎，入口顺滑",price:8,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"贡菜",desc:"脱水贡菜泡发，脆爽嘎吱响",price:10,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"毛肚",desc:"水牛毛肚，叶片厚实，七上八下脆嫩",price:32,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"黄喉",desc:"新鲜猪黄喉，脆弹爽口，久煮不老",price:28,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"鸭肠",desc:"新鲜鸭肠，干净无异味，涮完脆嫩",price:20,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"嫩牛肉片",desc:"牛里脊薄片，提前腌制，滑嫩入味",price:24,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"巴沙鱼片",desc:"无刺鱼片，肉质细嫩，低脂",price:16,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"金针菇",desc:"新鲜菌菇，菌香浓郁，吸满汤汁",price:7,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"娃娃菜",desc:"本地娃娃菜，清甜水润",price:6,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"藕片",desc:"洪湖莲藕，脆甜爽口",price:8,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"土豆片",desc:"黄心土豆，粉糯香甜",price:5,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"鲜豆皮",desc:"手工豆皮，豆香醇厚，吸汤一绝",price:9,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"鱼豆腐",desc:"鱼糜制作，弹嫩带鲜",price:11,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"海带苗",desc:"嫩海带芽，滑嫩鲜爽",price:7,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"鲜香菇",desc:"厚肉香菇，香气浓郁",price:8,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"响铃卷",desc:"油炸腐皮卷，一泡吸满汤汁",price:12,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"}
+      {name:"谷饲肥牛卷",desc:"谷饲肥牛，红白纹理均匀，下锅即熟，鲜嫩多汁",price:26,img:"https://picsum.photos/id/320/400/300"},
+      {name:"内蒙肥羊卷",desc:"内蒙羔羊肉，膻味轻，奶香柔和",price:24,img:"https://picsum.photos/id/321/400/300"},
+      {name:"黑毛猪五花肉",desc:"五花层次分明，油脂丰富，涮后焦香",price:22,img:"https://picsum.photos/id/322/400/300"},
+      {name:"手打青虾滑",desc:"青虾手工捶打，Q弹紧实，无过多淀粉",price:20,img:"https://picsum.photos/id/323/400/300"},
+      {name:"嫩鸭血",desc:"新鲜鸭血，滑嫩不易碎，入口顺滑",price:8,img:"https://picsum.photos/id/324/400/300"},
+      {name:"脱水贡菜",desc:"脱水贡菜泡发，脆爽嘎吱响",price:10,img:"https://picsum.photos/id/325/400/300"},
+      {name:"水牛毛肚",desc:"水牛毛肚，叶片厚实，七上八下脆嫩",price:32,img:"https://picsum.photos/id/326/400/300"},
+      {name:"鲜猪黄喉",desc:"新鲜猪黄喉，脆弹爽口，久煮不老",price:28,img:"https://picsum.photos/id/327/400/300"},
+      {name:"新鲜鸭肠",desc:"新鲜鸭肠，干净无异味，涮完脆嫩",price:20,img:"https://picsum.photos/id/328/400/300"},
+      {name:"腌制嫩牛肉片",desc:"牛里脊薄片，提前腌制，滑嫩入味",price:24,img:"https://picsum.photos/id/329/400/300"},
+      {name:"巴沙鱼片",desc:"无刺鱼片，肉质细嫩，低脂",price:16,img:"https://picsum.photos/id/330/400/300"},
+      {name:"金针菇",desc:"新鲜菌菇，菌香浓郁，吸满汤汁",price:7,img:"https://picsum.photos/id/331/400/300"},
+      {name:"娃娃菜",desc:"本地娃娃菜，清甜水润",price:6,img:"https://picsum.photos/id/332/400/300"},
+      {name:"洪湖藕片",desc:"洪湖莲藕，脆甜爽口",price:8,img:"https://picsum.photos/id/333/400/300"},
+      {name:"黄心土豆片",desc:"黄心土豆，粉糯香甜",price:5,img:"https://picsum.photos/id/334/400/300"},
+      {name:"手工鲜豆皮",desc:"手工豆皮，豆香醇厚，吸汤一绝",price:9,img:"https://picsum.photos/id/335/400/300"},
+      {name:"鱼豆腐",desc:"鱼糜制作，弹嫩带鲜",price:11,img:"https://picsum.photos/id/336/400/300"},
+      {name:"海带苗",desc:"嫩海带芽，滑嫩鲜爽",price:7,img:"https://picsum.photos/id/337/400/300"},
+      {name:"厚肉鲜香菇",desc:"厚肉香菇，香气浓郁",price:8,img:"https://picsum.photos/id/338/400/300"},
+      {name:"响铃卷",desc:"油炸腐皮卷，一泡吸满汤汁",price:12,img:"https://picsum.photos/id/339/400/300"}
     ]
   },
   {
     shopName:"新疆美好餐厅",
     goods:[
-      {name:"新疆烤包子",desc:"羊肉洋葱馅，外皮酥脆",price:12,img:"https://images.unsplash.com/photo-1565557635447-0bf15700d422?w=400"},
-      {name:"新疆手抓饭",desc:"羊肉胡萝卜焖饭，油香浓郁",price:20,img:"https://images.unsplash.com/photo-1565557635447-0bf15700d422?w=400"}
+      {name:"新疆烤包子",desc:"羊肉洋葱馅，外皮酥脆",price:12,img:"https://picsum.photos/id/340/400/300"},
+      {name:"羊肉手抓饭",desc:"羊肉胡萝卜焖饭，油香浓郁",price:20,img:"https://picsum.photos/id/341/400/300"}
     ]
   },
   {
     shopName:"潮汕风味小馆",
     goods:[
-      {name:"潮汕牛肉丸",desc:"手工捶打牛丸，爆汁Q弹",price:18,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"潮汕蚝烙",desc:"鲜蚝+地瓜粉煎制，外酥里嫩",price:22,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"}
+      {name:"潮汕手打牛肉丸",desc:"手工捶打牛丸，爆汁Q弹",price:18,img:"https://picsum.photos/id/342/400/300"},
+      {name:"潮汕蚝烙",desc:"鲜蚝+地瓜粉煎制，外酥里嫩",price:22,img:"https://picsum.photos/id/343/400/300"}
     ]
   },
   {
     shopName:"东北老味馆",
     goods:[
-      {name:"东北锅包肉",desc:"酸甜酥脆，老式做法",price:24,img:"https://images.unsplash.com/photo-1603048615023-08a4b48e8d15?w=400"},
-      {name:"东北酸菜白肉锅",desc:"酸菜+五花肉，暖锅",
+      {name:"老式锅包肉",desc:"酸甜酥脆，老式做法",price:24,img:"https://picsum.photos/id/344/400/300"},
+      {name:"酸菜白肉锅",desc:"酸菜+五花肉，暖锅",price:26,img:"https://picsum.photos/id/345/400/300"}
+    ]
+  }
+];
+
+// ========== 数据存储 ==========
+let cart = [];
+let orderList = JSON.parse(localStorage.getItem("pigOrderList") || "[]");
+let saveRecord = JSON.parse(localStorage.getItem("pigSaveRecord") || "{}");
+let currentSearch = "";
+
+// 渲染商品
+function renderGoods(){
+  const wrap = document.getElementById("goodsWrap");
+  wrap.innerHTML = "";
+  shopGoods.forEach(shop=>{
+    const filterGoods = shop.goods.filter(g=>{
+      if(!currentSearch) return true;
+      const kw = currentSearch.trim();
+      return shop.shopName.includes(kw) || g.name.includes(kw) || g.desc.includes(kw);
+    });
+    if(filterGoods.length === 0) return;
+    wrap.innerHTML += `<div class="shop-title">${shop.shopName}</div><div class="goods-list">`;
+    filterGoods.forEach(g=>{
+      wrap.innerHTML += `
+      <div class="goods-item">
+        <div class="goods-img">
+          <img src="${g.img}" crossorigin="anonymous" alt="${g.name}">
+        </div>
+        <div class="goods-info">
+          <div class="goods-name">${g.name}</div>
+          <div class="goods-desc">${g.desc}</div>
+          <div class="goods-price">¥${g.price.toFixed(2)}</div>
+          <button class="add-btn" data-shop="${shop.shopName}" data-name="${g.name}" data-price="${g.price}" data-img="${g.img}">加入购物车</button>
+        </div>
+      </div>
+      `;
+    })
+    wrap.innerHTML += `</div>`;
+  })
+  document.querySelectorAll(".add-btn").forEach(btn=>{
+    btn.onclick = ()=>{
+      cart.push({
+        shop:btn.dataset.shop,
+        name:btn.dataset.name,
+        price:Number(btn.dataset.price),
+        img:btn.dataset.img
+      })
+      updateCart();
+    }
+  })
+}
+
+function updateCart(){
+  document.getElementById("cartNum").innerText = cart.length;
+  const total = cart.reduce((s,i)=>s+i.price,0);
+  document.getElementById("cartTotal").innerText = total.toFixed(2);
+}
+
+// 渲染订单列表（时间线+明细）
+function renderOrderList(){
+  const wrap = document.getElementById("orderListWrap");
+  if(orderList.length === 0){
+    wrap.innerHTML = `<div class="empty-tip">暂无历史订单</div>`;
+    return;
+  }
+  wrap.innerHTML = "";
+  // 新订单放最上面
+  [...orderList].reverse().forEach(ord=>{
+    let itemHtml = "";
+    ord.list.forEach(i=>{
+      itemHtml += `<div class="order-line">▪ ${i.name}  ¥${i.price.toFixed(2)}</div>`;
+    })
+    wrap.innerHTML += `
+    <div class="order-item">
+      <div class="order-time">下单时间：${ord.timeStr}</div>
+      <div class="order-shopname">订单编号：${ord.id}</div>
+      ${itemHtml}
+      <div class="order-sum">订单总金额：¥${ord.total.toFixed(2)}</div>
+    </div>
+    `
+  })
+}
+
+// 切换标签
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.onclick = ()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    const t = tab.dataset.tab;
+    document.getElementById("foodPage").style.display = t==="food" ? "block" : "none";
+    document.getElementById("orderPage").style.display = t==="order" ? "block" : "none";
+    if(t==="order") renderOrderList();
+  }
+})
+
+// 搜索
+document.getElementById("search-input").oninput = (e)=>{
+  currentSearch = e.target.value.trim();
+  renderGoods();
+}
+
+// 结算下单
+document.getElementById("settleBtn").onclick = ()=>{
+  if(cart.length === 0) return alert("购物车是空的");
+  const total = cart.reduce((s,i)=>s+i.price,0);
+  const now = new Date();
+  const timeStr = now.toLocaleString();
+  const orderId = "ORD"+Date.now();
+  const newOrder = {
+    id:orderId,
+    time:now.getTime(),
+    timeStr,
+    list:[...cart],
+    total
+  };
+  orderList.push(newOrder);
+  localStorage.setItem("pigOrderList", JSON.stringify(orderList));
+
+  // 统计节省金额
+  const dayKey = now.toLocaleDateString();
+  if(!saveRecord[dayKey]) saveRecord[dayKey] = 0;
+  saveRecord[dayKey] += total;
+  localStorage.setItem("pigSaveRecord", JSON.stringify(saveRecord));
+
+  cart = [];
+  updateCart();
+  startDelivery(newOrder);
+}
+
+// 配送流程 + 骑手随机事件
+let deliveryTimer = null;
+function startDelivery(order){
+  const modal = document.getElementById("orderModal");
+  const stepWrap = document.getElementById("orderSteps");
+  modal.style.display = "flex";
+  const steps = [
+    {txt:"商家已接单",done:true},
+    {txt:"骑手正在赶往商家取餐",done:false},
+    {txt:"骑手已取餐，正在配送",done:false},
+    {txt:"订单送达！猪瘾压制成功 ✅",done:false}
+  ];
+  function renderStep(){
+    let html = "";
+    steps.forEach((s,idx)=>{
+      html += `<div class="step ${s.done ? 'done' : ''} ${(!s.done && steps.findIndex(x=>!x.done)===idx) ? 'current' : ''}">${s.txt}</div>`
+    })
+    stepWrap.innerHTML = html;
+  }
+  renderStep();
+  let stepIndex = 1;
+  function nextStep(){
+    if(stepIndex >= steps.length) return;
+    steps[stepIndex].done = true;
+    renderStep();
+    stepIndex++;
+    // 随机触发骑手奇遇
+    if(Math.random() < EVENT_CHANCE){
+      const evt = getRandomWeightEvent();
+      showEvent(evt, ()=>{
+        setTimeout(nextStep, 4000 + Math.random()*4000);
+      })
+    }else{
+      deliveryTimer = setTimeout(nextStep, 4000 + Math.random()*4000);
+    }
+  }
+  deliveryTimer = setTimeout(nextStep, 3000);
+}
+
+// 骑手弹窗
+function showEvent(evt, cb){
+  clearTimeout(deliveryTimer);
+  const m = document.getElementById("eventModal");
+  document.getElementById("eventTitle").innerText = evt.title;
+  document.getElementById("eventDesc").innerText = evt.desc;
+  document.getElementById("optA").innerText = evt.optA;
+  document.getElementById("optB").innerText = evt.optB;
+  m.style.display = "flex";
+  function close(){
+    m.style.display = "none";
+    cb();
+  }
+  document.getElementById("optA").onclick = ()=>{
+    alert(evt.resA); close();
+  }
+  document.getElementById("optB").onclick = ()=>{
+    alert(evt.resB); close();
+  }
+}
+
+// 催单
+document.getElementById("remindBtn").onclick = ()=>{
+  alert("📢 已经帮你提醒骑手啦！骑手收到催单消息，会加快速度~");
+}
+document.getElementById("closeOrderModal").onclick = ()=>{
+  document.getElementById("orderModal").style.display = "none";
+}
+
+// 统计面板
+document.getElementById("stat-btn").onclick = ()=>{
+  const now = new Date();
+  const todayStr = now.toLocaleDateString();
+  let day = saveRecord[todayStr] || 0;
+  let week = 0, month = 0;
+  Object.entries(saveRecord).forEach(([k,v])=>{
+    const d = new Date(k);
+    const diff = (now - d)/(1000*60*60*24);
+    if(diff < 7) week += v;
+    if(diff < 31) month += v;
+  })
+  document.getElementById("daySave").innerText = "¥"+day.toFixed(2);
+  document.getElementById("weekSave").innerText = "¥"+week.toFixed(2);
+  document.getElementById("monthSave").innerText = "¥"+month.toFixed(2);
+  document.getElementById("statModal").style.display = "flex";
+}
+document.getElementById("closeStatModal").onclick = ()=>{
+  document.getElementById("statModal").style.display = "none";
+}
+
+// 初始化
+renderGoods();
+updateCart();
+renderOrderList();
+</script>
+</body>
+</html>
+
