@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>猪瘾治疗 · 模拟外卖</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#ff4444">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui, sans-serif;}
+body{background:#f5f5f5;padding-bottom:90px;}
+header{background:#ff4444;color:white;padding:14px 16px;position:sticky;top:0;z-index:99;display:flex;justify-content:space-between;align-items:center;}
+header h1{font-size:18px;}
+.tab-bar{display:flex;background:white;position:sticky;top:52px;z-index:98;}
+.tab{flex:1;text-align:center;padding:10px 0;font-size:14px;color:#666;border-bottom:2px solid transparent;cursor:pointer;}
+.tab.active{color:#ff4444;border-color:#ff4444;font-weight:bold;}
+.search-wrap{padding:10px;background:white;}
+#search-input{width:100%;padding:10px 14px;border-radius:20px;border:1px solid #ddd;font-size:14px;outline:none;}
+.goods-list{padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.goods-item{background:white;border-radius:12px;overflow:hidden;}
+.goods-img{height:100px;background:#eee;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:24px;}
+.goods-info{padding:10px;}
+.goods-name{font-size:14px;font-weight:500;margin-bottom:4px;}
+.goods-desc{font-size:12px;color:#888;height:32px;overflow:hidden;}
+.goods-price{color:#ff4444;font-weight:bold;margin:6px 0;font-size:15px;}
+.add-btn{width:100%;padding:6px;background:#ff4444;color:white;border:none;border-radius:6px;cursor:pointer;}
+.cart-bar{position:fixed;bottom:0;left:0;right:0;background:white;padding:10px 14px;display:flex;align-items:center;gap:10px;border-top:1px solid #ddd;z-index:99;}
+.cart-info{flex:1;}
+.cart-total{font-size:14px;}
+.cart-count{color:#ff4444;}
+.settle-btn{padding:10px 18px;background:#ff4444;color:white;border:none;border-radius:22px;font-weight:bold;cursor:pointer;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:100;display:none;padding:16px;}
+.modal-box{background:white;border-radius:14px;max-width:420px;width:100%;padding:20px;}
+.modal-title{font-size:17px;font-weight:bold;margin-bottom:12px;}
+.modal-desc{color:#555;line-height:1.6;margin-bottom:16px;}
+.opt-row{display:flex;gap:10px;}
+.opt-btn{flex:1;padding:10px;border:1px solid #ff4444;background:white;color:#ff4444;border-radius:8px;cursor:pointer;}
+.opt-btn.primary{background:#ff4444;color:white;}
+.order-modal .step{padding:8px 0;border-bottom:1px solid #eee;}
+.step.done{color:#22bb22;}
+.step.current{color:#ff4444;font-weight:bold;}
+.stat-item{padding:8px 0;display:flex;justify-content:space-between;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🍔 猪瘾治疗外卖模拟器</h1>
+  <button id="stat-btn" style="border:none;background:#fff3f3;color:#ff4444;padding:6px 10px;border-radius:8px;cursor:pointer;">统计</button>
+</header>
+<div class="tab-bar">
+  <div class="tab active" data-tab="food">点餐</div>
+  <div class="tab" data-tab="order">我的订单</div>
+</div>
+<div class="search-wrap">
+  <input id="search-input" placeholder="搜索奶茶/蛋糕/火锅/小吃...">
+</div>
+<div class="goods-list" id="goodsList"></div>
+
+<div class="cart-bar">
+  <div class="cart-info">
+    <div>购物车 <span class="cart-count" id="cartNum">0</span>件</div>
+    <div class="cart-total">合计：¥<span id="cartTotal">0.00</span></div>
+  </div>
+  <button class="settle-btn" id="settleBtn">去结算</button>
+</div>
+
+<!-- 骑手奇遇弹窗 -->
+<div class="modal" id="eventModal">
+  <div class="modal-box">
+    <div class="modal-title" id="eventTitle"></div>
+    <div class="modal-desc" id="eventDesc"></div>
+    <div class="opt-row">
+      <button class="opt-btn" id="optA"></button>
+      <button class="opt-btn primary" id="optB"></button>
+    </div>
+  </div>
+</div>
+
+<!-- 订单配送弹窗 -->
+<div class="modal" id="orderModal">
+  <div class="modal-box order-modal">
+    <div class="modal-title">订单配送中</div>
+    <div id="orderSteps"></div>
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button class="opt-btn" id="remindBtn">催单</button>
+      <button class="opt-btn primary" id="closeOrderModal">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 每日统计弹窗 -->
+<div class="modal" id="statModal">
+  <div class="modal-box">
+    <div class="modal-title">📊 猪瘾治疗统计</div>
+    <div class="stat-item"><span>今日节省</span><span id="daySave">¥0.00</span></div>
+    <div class="stat-item"><span>本周节省</span><span id="weekSave">¥0.00</span></div>
+    <div class="stat-item"><span>本月节省</span><span id="monthSave">¥0.00</span></div>
+    <div class="opt-row" style="margin-top:16px;">
+      <button class="opt-btn primary" id="closeStatModal">知道了</button>
+    </div>
+  </div>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
+
+const eventList = [
+  {
+    title:"🐱 骑手在路上遇到一只小猫咪",
+    desc:"路边有一只软乎乎小猫蹲在路中间看骑手，骑手停下了车",
+    optA:"跟小猫说你好",
+    optB:"继续骑行",
+    resA:"骑手蹲下来跟小猫打招呼，小猫蹭了蹭裤腿，治愈一下继续赶路",
+    resB:"骑手轻轻绕开小猫，抓紧继续配送",
+    weight: 10
+  },
+  {
+    title:"🌧️ 突然下起大雨",
+    desc:"乌云翻涌，大雨说来就来，骑手正在寻找躲雨的屋檐",
+    optA:"给骑手空降一把雨伞",
+    optB:"冒雨继续骑行",
+    resA:"✨ 你空投了一把雨伞！骑手撑伞安心赶路，心里暖暖的",
+    resB:"骑手裹紧外套，冒着雨水继续往前冲",
+    weight: 5
+  },
+  {
+    title:"😔 骑手情绪低落，正在悄悄难过",
+    desc:"骑手今天跑了很多单，有点疲惫委屈，停下来抹眼泪",
+    optA:"送一个电子拥抱",
+    optB:"调整心情继续骑",
+    resA:"🤗 你送出电子拥抱！骑手收到安慰，擦干眼泪继续出发",
+    resB:"骑手深呼吸，调整好情绪继续往前配送",
+    weight: 6
+  },
+  {
+    title:"👵 路边老奶奶提着重物走不动",
+    desc:"老奶奶拎着一大袋菜，脚步缓慢，看起来很吃力",
+    optA:"骑手上前帮忙提一段路",
+    optB:"不耽误订单，继续赶路",
+    resA:"骑手热心帮奶奶把东西送到小区门口，奶奶连连道谢",
+    resB:"骑手心里有点过意不去，只能加速尽快给你送到",
+    weight: 2
+  },
+  {
+    title:"🚽 骑手有点内急",
+    desc:"骑了好久，骑手想上厕所，附近正好有公共卫生间",
+    optA:"允许骑手去方便一下",
+    optB:"先送完这一单再说",
+    resA:"骑手安心去卫生间休整片刻，一身轻松继续出发",
+    resB:"骑手忍住不适，加快速度，优先把你的外卖送到",
+    weight: 7
+  },
+  {
+    title:"💐 偶遇有好感的女同学",
+    desc:"路边站着骑手很久没见、心里有好感的女生，正在等公交",
+    optA:"停下来打个招呼",
+    optB:"微笑路过不耽搁",
+    resA:"骑手停下简单聊了两句，心里甜甜的，带着好心情赶路",
+    resB:"骑手悄悄看了一眼，轻轻挥手，继续专心配送",
+    weight: 3
+  },
+  {
+    title:"🍜 骑手肚子饿啦",
+    desc:"忙了一中午还没吃饭，路过小吃店，香味扑面而来",
+    optA:"允许骑手简单吃点东西垫肚子",
+    optB:"送完再吃饭",
+    resA:"骑手快速买了个包子几口吃完，补充体力继续跑单",
+    resB:"骑手摸摸空空的肚子，决定送完这一单再去吃饭",
+    weight: 6
+  },
+  {
+    title:"🐦 小鸟落在路边飞不起来",
+    desc:"一只幼鸟掉落在人行道，扑腾翅膀却无法起飞",
+    optA:"停下来小心照看小鸟",
+    optB:"继续赶路",
+    resA:"骑手小心把小鸟放到旁边安全的灌木丛，才重新出发",
+    resB:"骑手看了一眼，只能继续优先配送你的订单",
+    weight: 4
+  },
+  {
+    title:"🚦 等红灯，肩膀很僵硬",
+    desc:"长时间握车把手，骑手肩颈发酸，红灯时间比较长",
+    optA:"趁红灯活动舒展一下",
+    optB:"原地待命准备出发",
+    resA:"骑手转动脖子、甩甩手臂，紧绷的肩膀舒服不少",
+    resB:"骑手保持握车姿势，绿灯一亮立刻出发",
+    weight: 9
+  },
+  {
+    title:"🎵 街头歌手正在弹唱",
+    desc:"路口有歌手弹吉他唱歌，旋律温柔好听",
+    optA:"停下来听一小段",
+    optB:"不驻足，直接经过",
+    resA:"骑手静静听了一小段歌，烦恼都少了很多",
+    resB:"骑手欣赏地望了一眼，继续向前骑行",
+    weight: 7
+  },
+  {
+    title:"🧊 天很热，路过便利店",
+    desc:"太阳火辣辣，骑手满头大汗，便利店就在旁边",
+    optA:"买一瓶冰水降温",
+    optB:"坚持送到再喝水",
+    resA:"骑手买了冰水喝上几口，燥热缓解很多",
+    resB:"骑手擦擦汗水，忍着口渴继续赶路",
+    weight: 8
+  },
+  {
+    title:"🐶 温顺小狗拦在车前",
+    desc:"一只性格温顺的狗狗摇尾巴，好奇凑过来打量骑手",
+    optA:"停下来摸摸小狗",
+    optB:"缓慢绕行过去",
+    resA:"骑手伸手轻轻摸了摸狗头，小狗开心摇尾巴",
+    resB:"骑手慢慢减速，平稳绕开可爱小狗继续走",
+    weight: 10
+  },
+  {
+    title:"📱 家人发来消息",
+    desc:"骑手家人发来消息，问今天能不能早点回家吃饭",
+    optA:"停下来回复消息",
+    optB:"等送完再回消息",
+    resA:"骑手简短回复家人，心里暖暖的继续跑单",
+    resB:"骑手先把手机放回口袋，打算送完这一单再回消息",
+    weight: 5
+  },
+  {
+    title:"🍃 路边小花很好看",
+    desc:"路边一簇小花开得鲜亮，看着让人心情变好",
+    optA:"摘一朵送给自己",
+    optB:"欣赏一下继续走",
+    resA:"骑手小心摘了一朵小花放在车筐，一路带着花香赶路",
+    resB:"骑手多看了两眼漂亮小花，带着好心情继续配送",
+    weight: 8
+  },
+  {
+    title:"🛠️ 车筐有点松动",
+    desc:"电动车车筐螺丝松了，晃动得有点明显",
+    optA:"停下来拧紧螺丝",
+    optB:"先将就送到",
+    resA:"骑手拿出随身小工具快速拧紧，车子骑起来稳很多",
+    resB:"骑手小心骑行，尽量稳住车筐，防止餐品晃动",
+    weight: 2
+  },
+  {
+    title:"☁️ 天边晚霞绝美",
+    desc:"天边铺满橘红色晚霞，景色特别治愈",
+    optA:"停下来看一会晚霞",
+    optB:"抓紧往前赶",
+    resA:"骑手停下静静欣赏晚霞，一天的疲惫消散大半",
+    resB:"骑手匆匆瞥一眼晚霞，继续奔赴目的地",
+    weight: 9
+  },
+  {
+    title:"🧺 路边烤红薯飘香",
+    desc:"烤红薯小摊热气腾腾，香甜气味飘很远",
+    optA:"买一块红薯暖暖身子",
+    optB:"忍住不吃，先送单",
+    resA:"骑手买了一块热乎乎红薯，捧着暖手又解馋",
+    resB:"骑手咽了咽口水，继续往前骑行",
+    weight: 4
+  },
+  {
+    title:"🧢 帽子被风吹落",
+    desc:"一阵大风把骑手的帽子吹到路边",
+    optA:"停车捡回帽子",
+    optB:"不捡了继续走",
+    resA:"骑手停下车捡回帽子戴好，挡住刺眼阳光",
+    resB:"骑手索性迎着风，不回头，继续向前骑行",
+    weight: 3
+  },
+  {
+    title:"📖 小朋友挥手打招呼",
+    desc:"路边坐着看书的小朋友，笑着朝骑手挥手",
+    optA:"挥手回应小朋友",
+    optB:"点头路过",
+    resA:"骑手笑着挥手回应小朋友，小朋友笑得更开心啦",
+    resB:"骑手温柔点头示意，慢慢骑过去",
+    weight: 9
+  },
+  {
+    title:"🥤 店家递来免费温水",
+    desc:"路过小店，店主看见骑手辛苦，主动递一杯温水",
+    optA:"收下这杯温水",
+    optB:"婉拒好意，继续赶路",
+    resA:"骑手接过温水道谢，喝下之后浑身舒服",
+    resB:"骑手笑着感谢店主好意，礼貌婉拒继续配送",
+    weight: 6
+  }
+];
+
+function getRandomWeightEvent() {
+  const totalWeight = eventList.reduce((sum, item) => sum + item.weight, 0);
+  let r = Math.random() * totalWeight;
+  for(const evt of eventList){
+    r -= evt.weight;
+    if(r <= 0) return evt;
+  }
+  return eventList[0];
+}
+const EVENT_CHANCE = 0.35;
+
+const goods = [
+  {name:"秋日板栗奶绿",desc:"香甜板栗泥搭配清新绿茶，秋日限定",price:16,tag:"奶茶,秋日限定"},
+  {name:"圣诞热可可",desc:"浓郁可可+棉花糖，圣诞暖心款",price:18,tag:"奶茶,圣诞限定"},
+  {name:"芋泥波波奶茶",desc:"手捣厚芋泥，Q弹波波",price:15,tag:"奶茶"},
+  {name:"杨枝甘露",desc:"新鲜芒果+西柚粒，酸甜清爽",price:17,tag:"奶茶"},
+  {name:"珍珠奶茶",desc:"经典黑糖珍珠，奶香醇厚",price:12,tag:"奶茶"},
+  {name:"四季春奶青",desc:"清茶底，清爽不腻",price:13,tag:"奶茶"},
+  {name:"黑糖脏脏奶",desc:"黑糖挂壁，丝滑鲜奶",price:16,tag:"奶茶"},
+  {name:"蜜桃乌龙奶",desc:"水蜜桃果香，乌龙茶底",price:15,tag:"奶茶"},
+  {name:"葡萄多肉",desc:"巨峰葡萄果肉，冰沙款",price:19,tag:"奶茶"},
+  {name:"青提气泡奶",desc:"脆甜青提，气泡口感",price:18,tag:"奶茶"},
+  {name:"桂花酒酿奶",desc:"秋日桂花酒酿，淡淡酒香",price:16,tag:"奶茶,秋日限定"},
+  {name:"南瓜厚乳",desc:"绵密南瓜，厚乳丝滑",price:17,tag:"奶茶,秋日限定"},
+  {name:"肉桂苹果热奶",desc:"苹果+肉桂，圣诞氛围感",price:19,tag:"奶茶,圣诞限定"},
+  {name:"焦糖红茶奶",desc:"焦香焦糖红茶",price:14,tag:"奶茶"},
+  {name:"椰椰芒芒",desc:"椰乳+芒果果肉",price:16,tag:"奶茶"},
+  {name:"抹茶奶冻",desc:"宇治抹茶，Q弹奶冻",price:17,tag:"奶茶"},
+  {name:"红豆麻薯奶茶",desc:"绵密红豆，拉丝麻薯",price:16,tag:"奶茶"},
+  {name:"荔枝甘露",desc:"荔枝果肉，清甜水润",price:18,tag:"奶茶"},
+  {name:"草莓奶冻",desc:"新鲜草莓，奶香浓郁",price:19,tag:"奶茶"},
+  {name:"香芋西米露",desc:"香芋+西米，温饮好喝",price:14,tag:"奶茶"},
+  {name:"薄荷奶绿",desc:"清凉薄荷，解暑神器",price:13,tag:"奶茶"},
+  {name:"红枣姜奶",desc:"暖身红枣生姜奶",price:15,tag:"奶茶"},
+  {name:"板栗可可",desc:"板栗泥混合可可，秋冬款",price:18,tag:"奶茶,秋日限定"},
+  {name:"橙子热奶",desc:"鲜橙片热煮，维C满满",price:16,tag:"奶茶,圣诞限定"},
+  {name:"碧根果奶盖茶",desc:"碧根果碎咸奶盖",price:17,tag:"奶茶"},
+  {name:"糯糯紫米奶",desc:"软糯紫米，香甜饱腹",price:15,tag:"奶茶"},
+  {name:"茉莉奶白",desc:"茉莉鲜茶，奶味柔和",price:14,tag:"奶茶"},
+  {name:"凤梨果奶",desc:"酸甜凤梨，果香浓郁",price:16,tag:"奶茶"},
+  {name:"海盐芝士奶绿",desc:"咸香芝士奶盖",price:16,tag:"奶茶"},
+  {name:"红薯烤奶",desc:"烤红薯风味，秋冬暖饮",price:15,tag:"奶茶,秋日限定"},
+  {name:"可露丽",desc:"外壳焦脆内里软糯，香草香气浓郁",price:12,tag:"蛋糕"},
+  {name:"黑森林蛋糕",desc:"巧克力胚+樱桃酒渍果肉，经典德式",price:28,tag:"蛋糕"},
+  {name:"提拉米苏",desc:"马斯卡彭芝士，咖啡酒香",price:26,tag:"蛋糕"},
+  {name:"红丝绒蛋糕",desc:"丝绒胚，乳酪奶油",price:24,tag:"蛋糕"},
+  {name:"巴斯克芝士蛋糕",desc:"焦香流心芝士",price:22,tag:"蛋糕"},
+  {name:"芒果千层",desc:"薄饼皮，新鲜芒果果肉",price:30,tag:"蛋糕"},
+  {name:"草莓慕斯",desc:"酸甜草莓慕斯，清爽不腻",price:25,tag:"蛋糕"},
+  {name:"抹茶慕斯",desc:"宇治抹茶，微苦回甘",price:24,tag:"蛋糕"},
+  {name:"巧克力熔岩",desc:"切开流心巧克力",price:20,tag:"蛋糕"},
+  {name:"海盐奥利奥慕斯",desc:"咸甜奥利奥奶油",price:23,tag:"蛋糕"},
+  {name:"榴莲千层",desc:"金枕榴莲果肉，浓郁香甜",price:35,tag:"蛋糕"},
+  {name:"伯爵红茶蛋糕",desc:"伯爵茶奶油，淡淡茶香",price:24,tag:"蛋糕"},
+  {name:"椰子冻蛋糕",desc:"椰香奶油搭配椰子冻",price:22,tag:"蛋糕"},
+  {name:"树莓慕斯",desc:"酸香树莓，颜值很高",price:26,tag:"蛋糕"},
+  {name:"焦糖布丁蛋糕",desc:"底层蛋糕上层焦糖布丁",price:21,tag:"蛋糕"},
+  {name:"芝士卷",desc:"松软蛋糕卷，芝士内馅",price:18,tag:"蛋糕"},
+  {name:"毛巾卷抹茶",desc:"薄皮毛巾卷，抹茶奶油",price:17,tag:"蛋糕"},
+  {name:"毛巾卷巧克力",desc:"可可皮，巧克力奶油",price:17,tag:"蛋糕"},
+  {name:"毛巾卷草莓",desc:"草莓果肉毛巾卷",price:18,tag:"蛋糕"},
+  {name:"桂花酒酿蛋糕",desc:"桂花酒酿奶油，秋日款",price:25,tag:"蛋糕,秋日限定"},
+  {name:"南瓜乳酪蛋糕",desc:"香甜南瓜，乳酪夹心",price:23,tag:"蛋糕,秋日限定"},
+  {name:"肉桂苹果蛋糕",desc:"苹果肉桂，圣诞风味",price:26,tag:"蛋糕,圣诞限定"},
+  {name:"姜饼蛋糕",desc:"姜饼风味奶油，圣诞限定",price:24,tag:"蛋糕,圣诞限定"},
+  {name:"覆盆子达克瓦兹",desc:"杏仁饼体，覆盆子夹心",price:14,tag:"蛋糕"},
+  {name:"马卡龙（2枚）",desc:"法式马卡龙，低糖版",price:16,tag:"蛋糕"},
+  {name:"香芋蛋糕",desc:"手捣香芋奶油，绵密香甜",price:23,tag:"蛋糕"},
+  {name:"豆乳盒子",desc:"黄豆粉+豆乳奶油，软糯",price:19,tag:"蛋糕"},
+  {name:"生椰拿铁蛋糕",desc:"生椰+咖啡奶油",price:24,tag:"蛋糕"},
+  {name:"青提慕斯",desc:"阳光青提果肉，清爽",price:25,tag:"蛋糕"},
+  {name:"蓝莓芝士",desc:"新鲜蓝莓，重芝士",price:26,tag:"蛋糕"},
+  {name:"核桃布朗尼",desc:"扎实布朗尼，核桃仁",price:20,tag:"蛋糕"},
+  {name:"香橙蛋糕",desc:"橙皮风味，清新解腻",price:22,tag:"蛋糕"},
+  {name:"黑芝麻慕斯",desc:"浓郁黑芝麻，醇香",price:23,tag:"蛋糕"},
+  {name:"咸蛋黄蛋糕",desc:"流沙咸蛋黄夹心",price:24,tag:"蛋糕"},
+  {name:"杨枝甘露蛋糕",desc:"芒果西柚奶油",price:27,tag:"蛋糕"},
+  {name:"荔枝玫瑰蛋糕",desc:"荔枝果肉玫瑰奶油",price:26,tag:"蛋糕"},
+  {name:"蜜桃蛋糕",desc:"水蜜桃果肉，清甜",price:25,tag:"蛋糕"},
+  {name:"菠萝翻转蛋糕",desc:"烤菠萝，黄油蛋糕",price:22,tag:"蛋糕"},
+  {name:"奶盖舒芙蕾",desc:"软fufu舒芙蕾，奶盖",price:21,tag:"蛋糕"},
+  {name:"可可脆蛋糕",desc:"巧克力脆片夹心",price:23,tag:"蛋糕"},
+  {name:"开心果慕斯",desc:"开心果泥，香气浓郁",price:28,tag:"蛋糕"},
+  {name:"无花果蛋糕",desc:"新鲜无花果，低糖奶油",price:27,tag:"蛋糕"},
+  {name:"杏仁蛋糕",desc:"扁桃仁薄片，黄油香",price:22,tag:"蛋糕"},
+  {name:"黑米蛋糕",desc:"黑米夹层，低糖健康",price:20,tag:"蛋糕"},
+  {name:"桂花栗子蛋糕",desc:"栗子泥+桂花，秋日",price:26,tag:"蛋糕,秋日限定"},
+  {name:"雪花圣诞蛋糕",desc:"奶油雪顶，圣诞装饰",price:30,tag:"蛋糕,圣诞限定"},
+  {name:"柠檬磅蛋糕",desc:"湿润磅蛋糕，柠檬清香",price:16,tag:"蛋糕"},
+  {name:"香蕉核桃蛋糕",desc:"香蕉果肉核桃，香甜",price:18,tag:"蛋糕"},
+  {name:"桑葚慕斯",desc:"黑桑葚果肉，酸甜浓郁",price:24,tag:"蛋糕"},
+  {name:"玫瑰乳酪蛋糕",desc:"重乳酪，玫瑰花瓣",price:25,tag:"蛋糕"},
+  {name:"白菜猪肉水饺",desc:"新鲜大白菜搭配五花肉，皮薄馅足",price:14,tag:"饺子"},
+  {name:"韭菜鸡蛋水饺",desc:"鲜嫩韭菜，土鸡蛋，清淡爽口",price:12,tag:"饺子"},
+  {name:"虾仁三鲜水饺",desc:"大颗虾仁+木耳香菇，鲜掉眉毛",price:22,tag:"饺子"},
+  {name:"玉米猪肉水饺",desc:"甜玉米搭配猪肉，清甜多汁",price:15,tag:"饺子"},
+  {name:"芹菜牛肉水饺",desc:"西芹配黄牛肉，香而不腻",price:18,tag:"饺子"},
+  {name:"荠菜猪肉水饺",desc:"野生荠菜，清香独特",price:16,tag:"饺子"},
+  {name:"香菇鸡肉水饺",desc:"鲜香菇鸡胸肉，低脂",price:14,tag:"饺子"},
+  {name:"酸菜猪肉水饺",desc:"东北酸菜，酸香开胃",price:15,tag:"饺子"},
+  {name:"大葱牛肉水饺",desc:"大葱提香，牛肉紧实",price:19,tag:"饺子"},
+  {name:"鲅鱼水饺",desc:"新鲜鲅鱼肉，胶东特色",price:24,tag:"饺子"},
+  {name:"肥牛卷",desc:"谷饲肥牛，红白纹理均匀，下锅即熟，鲜嫩多汁",price:26,tag:"火锅"},
+  {name:"肥羊卷",desc:"内蒙羔羊肉，膻味轻，奶香柔和",price:24,tag:"火锅"},
+  {name:"黑毛猪五花肉",desc:"五花层次分明，油脂丰富，涮后焦香",price:22,tag:"火锅"},
+  {name:"手打虾滑",desc:"青虾手工捶打，Q弹紧实，无过多淀粉",price:20,tag:"火锅"},
+  {name:"嫩鸭血",desc:"新鲜鸭血，滑嫩不易碎，入口顺滑",price:8,tag:"火锅"},
+  {name:"贡菜",desc:"脱水贡菜泡发，脆爽嘎吱响",price:10,tag:"火锅"},
+  {name:"毛肚",desc:"水牛毛肚，叶片厚实，七上八下脆嫩",price:32,tag:"火锅"},
+  {name:"黄喉",desc:"新鲜猪黄喉，脆弹爽口，久煮不老",price:28,tag:"火锅"},
+  {name:"鸭肠",desc:"新鲜鸭肠，干净无异味，涮完脆嫩",price:20,tag:"火锅"},
+  {name:"嫩牛肉片",desc:"牛里脊薄片，提前腌制，滑嫩入味",price:24,tag:"火锅"},
+  {name:"巴沙鱼片",desc:"无刺鱼片，肉质细嫩，低脂",price:16,tag:"火锅"},
+  {name:"金针菇",desc:"新鲜菌菇，菌香浓郁，吸满汤汁",price:7,tag:"火锅"},
+  {name:"娃娃菜",desc:"本地娃娃菜，清甜水润",price:6,tag:"火锅"},
+  {name:"藕片",desc:"洪湖莲藕，脆甜爽口",price:8,tag:"火锅"},
+  {name:"土豆片",desc:"黄心土豆，粉糯香甜",price:5,tag:"火锅"},
+  {name:"鲜豆皮",desc:"手工豆皮，豆香醇厚，吸汤一绝",price:9,tag:"火锅"},
+  {name:"鱼豆腐",desc:"鱼糜制作，弹嫩带鲜",price:11,tag:"火锅"},
+  {name:"海带苗",desc:"嫩海带芽，滑嫩鲜爽",price:7,tag:"火锅"},
+  {name:"鲜香菇",desc:"厚肉香菇，香气浓郁",price:8,tag:"火锅"},
+  {name:"响铃卷",desc:"油炸腐皮卷，一泡吸满汤汁",price:12,tag:"火锅"},
+  {name:"潮汕牛肉丸",desc:"手工捶打牛丸，爆汁Q弹",price:18,tag:"小吃,潮汕"},
+  {name:"潮汕蚝烙",desc:"鲜蚝+地瓜粉煎制，外酥里嫩",price:22,tag:"小吃,潮汕"},
+  {name:"新疆烤包子",desc:"羊肉洋葱馅，外皮酥脆",price:12,tag:"小吃,新疆"},
+  {name:"新疆手抓饭",desc:"羊肉胡萝卜焖饭，油香浓郁",price:20,tag:"小吃,新疆"},
+  {name:"东北锅包肉",desc:"酸甜酥脆，老式做法",price:24,tag:"小吃,东北"},
+  {name:"东北酸菜白肉锅",desc:"酸菜+五花肉，暖锅",price:28,tag:"小吃,东北"},
+  {name:"西湖醋鱼",desc:"草鱼，酸甜香醋风味，杭帮菜",price:32,tag:"小吃"},
+  {name:"折耳根拌黄瓜",desc:"云贵特色，脆爽独特风味",price:10,tag:"小吃"},
+  {name:"长沙臭豆腐",desc:"黑色臭豆腐，香辣灌汤",price:12,tag:"小吃"},
+  {name:"武汉热干面",desc:"麻酱浓郁，劲道碱水面",price:11,tag:"小吃"},
+  {name:"柳州螺蛳粉",desc:"酸笋腐竹花生，酸辣过瘾",price:16,tag:"小吃"},
+  {name:"重庆小面",desc:"麻辣鲜香，红油劲道",price:13,tag:"小吃"},
+  {name:"陕西肉夹馍",desc:"腊汁肉，白吉馍酥脆",price:12,tag:"小吃"},
+  {name:"兰州牛肉面",desc:"一清二白三红四绿",price:16,tag:"小吃"},
+  {name:"天津狗不理包子",desc:"鲜肉汤包，皮薄多汁",price:18,tag:"小吃"},
+  {name:"广东肠粉",desc:"鲜虾肠粉，滑嫩鲜",price:14,tag:"小吃"}
+];
+
+let cart = JSON.parse(localStorage.getItem("pigCart")) || [];
+let orders = JSON.parse(localStorage.getItem("pigOrders")) || [];
+let saveRecord = JSON.parse(localStorage.getItem("pigSaveRecord")) || {};
+
+function renderGoods(keyword=""){
+  const wrap = document.getElementById("goodsList");
+  wrap.innerHTML = "";
+  const kw = keyword.trim().toLowerCase();
+  const filter = goods.filter(g=> g.name.toLowerCase().includes(kw) || g.tag.toLowerCase().includes(kw));
+  filter.forEach(item=>{
+    const div = document.createElement("div");
+    div.className = "goods-item";
+    div.innerHTML = `
+      <div class="goods-img">🍽️</div>
+      <div class="goods-info">
+        <div class="goods-name">${item.name}</div>
+        <div class="goods-desc">${item.desc}</div>
+        <div class="goods-price">¥${item.price.toFixed(2)}</div>
+        <button class="add-btn" data-name="${item.name}" data-price="${item.price}">加入购物车</button>
+      </div>
+    `;
+    wrap.appendChild(div);
+  })
+  document.querySelectorAll(".add-btn").forEach(btn=>{
+    btn.onclick = ()=>{
+      cart.push({name:btn.dataset.name,price:Number(btn.dataset.price)});
+      saveCart();
+      updateCartUI();
+    }
+  })
+}
+function saveCart(){
+  localStorage.setItem("pigCart", JSON.stringify(cart));
+}
+function updateCartUI(){
+  const total = cart.reduce((s,i)=> s+i.price, 0);
+  document.getElementById("cartNum").innerText = cart.length;
+  document.getElementById("cartTotal").innerText = total.toFixed(2);
+}
+
+document.getElementById("settleBtn").onclick = function(){
+  if(cart.length === 0){alert("购物车是空的哦");return;}
+  const total = cart.reduce((s,i)=> s+i.price, 0);
+  const today = new Date().toISOString().slice(0,10);
+  if(!saveRecord[today]) saveRecord[today] = 0;
+  saveRecord[today] += total;
+  localStorage.setItem("pigSaveRecord", JSON.stringify(saveRecord));
+
+  const order = {
+    id: Date.now(),
+    list: [...cart],
+    total: total,
+    step:0,
+    steps:["商家接单","餐品制作完成","骑手取餐","骑手配送中","已送达"],
+    timer:null
+  };
+  orders.unshift(order);
+  localStorage.setItem("pigOrders", JSON.stringify(orders));
+  cart = [];
+  saveCart();
+  updateCartUI();
+  runOrder(order);
+}
+
+function runOrder(order){
+  const modal = document.getElementById("orderModal");
+  modal.style.display = "flex";
+  function renderStep(){
+    const wrap = document.getElementById("orderSteps");
+    wrap.innerHTML = "";
+    order.steps.forEach((s,idx)=>{
+      const cls = idx < order.step ? "step done" : (idx === order.step ? "step current" : "step");
+      wrap.innerHTML += `<div class="${cls}">${idx<order.step?"✅":"⏳"} ${s}</div>`
+    })
+  }
+  renderStep();
+  function nextStep(){
+    order.step += 1;
+    renderStep();
+    localStorage.setItem("pigOrders", JSON.stringify(orders));
+    if(order.step >= order.steps.length){
+      alert("✅ 外卖送到啦！你成功忍住没有真的下单，猪瘾治疗+¥"+order.total.toFixed(2));
+      return;
+    }
+    if(Math.random() < EVENT_CHANCE){
+      const evt = getRandomWeightEvent();
+      showEvent(evt, ()=>{
+        const delay = 22000 + Math.random()*18000;
+        order.timer = setTimeout(nextStep, delay);
+      })
+    }else{
+      const delay = 22000 + Math.random()*18000;
+      order.timer = setTimeout(nextStep, delay);
+    }
+  }
+  const delay0 = 2500 + Math.random()*3000;
+  order.timer = setTimeout(nextStep, delay0);
+}
+
+function showEvent(evt, callback){
+  const m = document.getElementById("eventModal");
+  document.getElementById("eventTitle").innerText = evt.title;
+  document.getElementById("eventDesc").innerText = evt.desc;
+  const btnA = document.getElementById("optA");
+  const btnB = document.getElementById("optB");
+  btnA.innerText = evt.optA;
+  btnB.innerText = evt.optB;
+  m.style.display = "flex";
+  function close(){
+    m.style.display = "none";
+    callback();
+  }
+  btnA.onclick = ()=>{
+    alert("👉 "+evt.resA);
+    close();
+  }
+  btnB.onclick = ()=>{
+    alert("👉 "+evt.resB);
+    close();
+  }
+}
+
+document.getElementById("remindBtn").onclick = function(){
+  alert("📩 已经帮你温柔提醒骑手啦，骑手会加快速度~");
+}
+document.getElementById("closeOrderModal").onclick = function(){
+  document.getElementById("orderModal").style.display = "none";
+}
+
+document.getElementById("stat-btn").onclick = function(){
+  calcStat();
+  document.getElementById("statModal").style.display = "flex";
+}
+document.getElementById("closeStatModal").onclick = function(){
+  document.getElementById("statModal").style.display = "none";
+}
+function calcStat(){
+  const now = new Date();
+  let day=0,week=0,month=0;
+  for(const dStr in saveRecord){
+    const d = new Date(dStr);
+    const val = saveRecord[dStr];
+    if(d.toDateString() === now.toDateString()) day += val;
+    const diff = (now - d)/(1000*3600*24);
+    if(diff < 7) week += val;
+    if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) month += val;
+  }
+  document.getElementById("daySave").innerText = "¥"+day.toFixed(2);
+  document.getElementById("weekSave").innerText = "¥"+week.toFixed(2);
+  document.getElementById("monthSave").innerText = "¥"+month.toFixed(2);
+}
+
+document.getElementById("search-input").oninput = function(){
+  renderGoods(this.value);
+}
+
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.onclick = ()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    const t = tab.dataset.tab;
+    if(t === "food"){
+      document.getElementById("goodsList").style.display = "grid";
+    }else{
+      document.getElementById("goodsList").style.display = "none";
+      alert("订单页面后续扩展，现在下单后会自动弹出配送窗口");
+    }
+  }
+})
+
+renderGoods();
+updateCartUI();
+calcStat();
+</script>
+</body>
+</html>
